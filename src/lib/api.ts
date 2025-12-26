@@ -1,4 +1,4 @@
-import { UserLogin, UserRegister, Token, UserResponse, ListingCreate, ListingResponse, UserUpdate } from "./types";
+import { UserLogin, UserRegister, Token, UserResponse, ListingCreate, ListingResponse, UserUpdate, ChatListResponse, MessageResponse, MessageCreate } from "./types";
 
 const API_URL = "https://hsd-proje.onrender.com";
 
@@ -108,6 +108,27 @@ export const authApi = {
     getSuggestedListings: async (): Promise<ListingResponse[]> => {
         return request<ListingResponse[]>("/listings/suggested", {
             method: "GET",
+        });
+    }
+};
+
+export const chatApi = {
+    getMyChats: async (): Promise<ChatListResponse[]> => {
+        return request<ChatListResponse[]>("/chats/", {
+            method: "GET",
+        });
+    },
+
+    getChatMessages: async (chatId: string): Promise<MessageResponse[]> => {
+        return request<MessageResponse[]>(`/chats/${chatId}/messages`, {
+            method: "GET",
+        });
+    },
+
+    sendMessage: async (chatId: string, data: MessageCreate): Promise<MessageResponse> => {
+        return request<MessageResponse>(`/chats/${chatId}/messages`, {
+            method: "POST",
+            body: JSON.stringify(data),
         });
     }
 };

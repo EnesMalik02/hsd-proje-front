@@ -95,3 +95,28 @@ export interface ValidationError {
 export interface HTTPValidationError {
     detail: ValidationError[];
 }
+
+export interface ChatListResponse {
+    id: string;
+    participants: string[];
+    listing_id: string;
+    status: string;
+    last_message?: string | null;
+    last_message_time?: string | null;
+    unread_count?: Record<string, number>;
+}
+
+export interface MessageResponse {
+    text?: string | null;
+    type: string;
+    media_url?: string | null;
+    id: string;
+    sender_id: string;
+    created_at?: string | null;
+}
+
+export interface MessageCreate {
+    text?: string | null;
+    type?: string;
+    media_url?: string | null;
+}
