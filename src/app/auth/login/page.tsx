@@ -13,7 +13,7 @@ export default function LoginPage() {
     const [showPassword, setShowPassword] = useState(false);
 
     const [formData, setFormData] = useState({
-        email: "",
+        identifier: "",
         password: "",
     });
 
@@ -69,21 +69,21 @@ export default function LoginPage() {
                     )}
 
                     <div className="space-y-1.5">
-                        <label className="text-xs font-semibold text-gray-700 ml-1" htmlFor="email">
-                            Email Address
+                        <label className="text-xs font-semibold text-gray-700 ml-1" htmlFor="identifier">
+                            Email or Username
                         </label>
                         <div className="relative">
                             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                 <Mail className="h-4 w-4 text-gray-400" />
                             </div>
                             <input
-                                id="email"
-                                type="email"
+                                id="identifier"
+                                type="text"
                                 required
                                 className="block w-full pl-10 pr-3 py-2.5 border border-gray-200 rounded-lg text-sm bg-gray-50 placeholder-gray-400 focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-all font-medium text-gray-900"
-                                placeholder="name@company.com"
-                                value={formData.email}
-                                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                                placeholder="email or username"
+                                value={formData.identifier}
+                                onChange={(e) => setFormData({ ...formData, identifier: e.target.value })}
                             />
                         </div>
                     </div>
