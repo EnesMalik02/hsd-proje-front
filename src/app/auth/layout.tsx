@@ -1,22 +1,37 @@
+import Link from "next/link";
+import { Hexagon } from "lucide-react";
+
 export default function AuthLayout({
     children,
 }: {
     children: React.ReactNode;
 }) {
     return (
-        <div className="min-h-screen w-full flex items-center justify-center bg-gray-50 dark:bg-neutral-900 overflow-hidden relative">
-            {/* Background Gradients */}
-            <div className="absolute top-0 left-0 w-full h-full overflow-hidden blur-3xl opacity-30 pointer-events-none">
-                <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl animate-pulse"></div>
-                <div className="absolute top-[20%] right-[-10%] w-[50%] h-[50%] bg-cyan-500 rounded-full mix-blend-multiply filter blur-3xl animate-pulse" style={{ animationDelay: "2s" }}></div>
-                <div className="absolute bottom-[-10%] left-[20%] w-[50%] h-[50%] bg-pink-500 rounded-full mix-blend-multiply filter blur-3xl animate-pulse" style={{ animationDelay: "4s" }}></div>
-            </div>
-
-            <div className="z-10 w-full max-w-md p-6">
-                <div className="bg-white/80 dark:bg-black/40 backdrop-blur-xl border border-white/20 dark:border-white/10 shadow-2xl rounded-2xl p-8">
-                    {children}
+        <div className="min-h-screen w-full flex flex-col bg-[#f8f9fa] text-gray-900 font-sans">
+            {/* Navbar */}
+            <header className="w-full px-8 py-6 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                    <div className="bg-red-600 p-1 rounded-lg">
+                        <Hexagon className="w-6 h-6 text-white fill-current" />
+                    </div>
+                    <span className="text-xl font-bold tracking-tight">HSD Proje API</span>
                 </div>
-            </div>
+                <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-gray-600">
+                    <Link href="#" className="hover:text-gray-900 transition-colors">Documentation</Link>
+                    <Link href="#" className="hover:text-gray-900 transition-colors">Support</Link>
+                    <Link href="#" className="hover:text-gray-900 transition-colors">Status</Link>
+                </nav>
+            </header>
+
+            {/* Main Content */}
+            <main className="flex-1 flex flex-col items-center justify-center p-4">
+                {children}
+            </main>
+
+            {/* Footer */}
+            <footer className="py-8 text-center text-xs text-gray-400">
+                © 2024 HSD Proje API. All rights reserved.
+            </footer>
         </div>
     );
 }
