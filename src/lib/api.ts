@@ -103,5 +103,11 @@ export const authApi = {
             method: "PUT",
             body: JSON.stringify(data),
         });
+    },
+
+    getSuggestedListings: async (): Promise<ListingResponse[]> => {
+        return request<ListingResponse[]>("/listings/suggested", {
+            method: "GET",
+        });
     }
 };
