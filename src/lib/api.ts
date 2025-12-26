@@ -1,6 +1,6 @@
 import { UserLogin, UserRegister, Token, UserResponse, ListingCreate, ListingResponse, UserUpdate } from "./types";
 
-const API_URL = "http://localhost:8000";
+const API_URL = "https://hsd-proje.onrender.com";
 
 // Helper to set cookie
 function setCookie(name: string, value: string, days: number) {
