@@ -15,10 +15,10 @@ import {
 
 export default function ListingDetailPage() {
     const params = useParams();
-    const router = useRouter();
     const [listing, setListing] = useState<ListingResponse | null>(null);
     const [loading, setLoading] = useState(true);
     const [activeImage, setActiveImage] = useState(0);
+    const [isDonation, setIsDonation] = useState(false);
 
     useEffect(() => {
         const fetchListing = async () => {
@@ -35,6 +35,10 @@ export default function ListingDetailPage() {
             fetchListing();
         }
     }, [params.id]);
+
+    useEffect(() => {
+        setIsDonation(listing?.price === 0 || listing?.type === 'donation');
+    }, [listing]);
 
     if (loading) {
         return (
@@ -150,21 +154,6 @@ export default function ListingDetailPage() {
                             </p>
                         </div>
 
-                        {/* Amenities / Features (Mocked or derived) */}
-                        {/* 
-                <div>
-                     <h2 className="text-xl font-bold text-gray-900 mb-6">Features</h2>
-                     <div className="grid grid-cols-2 md:grid-cols-3 gap-y-4 gap-x-8">
-                        {["Condition: New", "Original Box", "Receipt Available"].map((item) => (
-                            <div key={item} className="flex items-center gap-2 text-gray-600">
-                                <CheckCircle2 className="w-5 h-5 text-red-600" />
-                                <span className="text-sm font-medium">{item}</span>
-                            </div>
-                        ))}
-                     </div>
-                </div>
-                */}
-
                         {/* Location Map Placeholder */}
                         <div>
                             <h2 className="text-xl font-bold text-gray-900 mb-6">Location</h2>
@@ -191,11 +180,32 @@ export default function ListingDetailPage() {
                             <div className="bg-white rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.08)] border border-gray-100 p-6">
                                 <div className="mb-6">
                                     <div className="text-xs text-gray-500 font-medium mb-1">
-                                        {listing.type === 'donation' ? 'Estimated Value' : 'Listing Price'}
+                                        {isDonation ? (
+                                            ''
+                                        ) : (
+                                            'Listing Price'
+                                        )}
                                     </div>
-                                    <div className="text-4xl font-extrabold text-red-600">
-                                        {listing.price.toLocaleString()} {listing.currency}
-                                    </div>
+                                    {isDonation ? (
+                                        <div className="flex justify-center py-4">
+                                            <style jsx>{`
+                                                @keyframes scalePulse {
+                                                    0%, 100% { transform: scale(1) rotate(40deg); }
+                                                    50% { transform: scale(1.2) rotate(40deg); }
+                                                }
+                                                .donation-label {
+                                                    animation: scalePulse 2s infinite ease-in-out;
+                                                }
+                                            `}</style>
+                                            <div className="donation-label text-5xl font-extrabold text-red-600 border-4 border-red-600 px-4 py-1 rounded-xl shadow-lg bg-white/50 backdrop-blur-sm -rotate-[30deg]">
+                                                BAĞIŞ
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <div className="text-4xl font-extrabold text-red-600">
+                                            {listing.price.toLocaleString()} {listing.currency}
+                                        </div>
+                                    )}
                                 </div>
 
                                 <div className="flex items-center gap-4 mb-6">
@@ -211,7 +221,7 @@ export default function ListingDetailPage() {
                                     <div>
                                         <div className="font-bold text-gray-900 text-lg">{listing.owner_name}</div>
                                         <div className="text-xs text-gray-500 flex items-center gap-1">
-                                            Seller / Donor
+                                            Lister
                                         </div>
                                     </div>
                                 </div>
