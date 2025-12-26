@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { chatApi, authApi } from "@/lib/api";
 import { MessageResponse, MessageCreate } from "@/lib/types";
 import { Loader2, Send } from "lucide-react";
@@ -11,11 +11,18 @@ export default function ChatDetailPage() {
     const id = params.id as string;
 
     const [messages, setMessages] = useState<MessageResponse[]>([]);
+    const [chatMeta, setChatMeta] = useState<{
+        listing_id?: string;
+        listing_title?: string;
+        listing_image?: string;
+        other_user_name?: string;
+    } | null>(null);
     const [loading, setLoading] = useState(true);
     const [sending, setSending] = useState(false);
     const [newMessage, setNewMessage] = useState("");
     const [userId, setUserId] = useState<string | null>(null);
     const messagesEndRef = useRef<HTMLDivElement>(null);
+    const router = useRouter();
 
     // Fetch current user ID to determine message alignment
     useEffect(() => {
@@ -31,10 +38,39 @@ export default function ChatDetailPage() {
     }, []);
 
     useEffect(() => {
-        const fetchMessages = async () => {
+        const fetchData = async () => {
             try {
-                const data = await chatApi.getChatMessages(id);
-                setMessages(data);
+                // Fetch messages
+                const msgs = await chatApi.getChatMessages(id);
+                setMessages(msgs);
+
+                // Fetch chat metadata (listing info)
+                // Since we don't have a direct getChatById, we fetch all chats and find this one
+                // Optimally this should be a single endpoint, but we work with what we have.
+                const myChats = await chatApi.getMyChats();
+                const currentChat = myChats.find(c => c.id === id);
+
+                if (currentChat) {
+                    let otherUserName = "Kullanıcı";
+                    // Try to resolve other user name if we have userId (me)
+                    if (userId) {
+                        const otherId = currentChat.participants.find(p => p !== userId);
+                        if (otherId) {
+                            try {
+                                const u = await authApi.getUser(otherId);
+                                otherUserName = u.display_name || u.username || "Kullanıcı";
+                            } catch (e) { console.error(e); }
+                        }
+                    }
+
+                    setChatMeta({
+                        listing_id: currentChat.listing_id,
+                        listing_title: currentChat.listing_title,
+                        listing_image: currentChat.listing_image,
+                        other_user_name: otherUserName
+                    });
+                }
+
             } catch (err) {
                 console.error(err);
             } finally {
@@ -42,11 +78,20 @@ export default function ChatDetailPage() {
             }
         };
 
-        fetchMessages();
+        if (userId) { // Wait for userId to be set to fetch meta correctly
+            fetchData();
+        }
+
         // Poll for new messages every 5 seconds
-        const interval = setInterval(fetchMessages, 5000);
+        const interval = setInterval(async () => {
+            try {
+                const msgs = await chatApi.getChatMessages(id);
+                setMessages(msgs);
+            } catch (e) { console.error(e); }
+        }, 5000);
+
         return () => clearInterval(interval);
-    }, [id]);
+    }, [id, userId]);
 
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -54,19 +99,37 @@ export default function ChatDetailPage() {
 
     const handleSend = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!newMessage.trim()) return;
+        if (!newMessage.trim() || !userId) return;
 
+        const tempId = `temp-${Date.now()}`;
+        const tempMsg: MessageResponse = {
+            id: tempId,
+            text: newMessage,
+            type: "text",
+            sender_id: userId,
+            created_at: new Date().toISOString()
+        };
+
+        // Optimistic update
+        setMessages(prev => [...prev, tempMsg]);
+        setNewMessage("");
         setSending(true);
+
         try {
             const payload: MessageCreate = {
-                text: newMessage,
+                text: tempMsg.text,
                 type: "text"
             };
             const sentMsg = await chatApi.sendMessage(id, payload);
-            setMessages(prev => [...prev, sentMsg]);
-            setNewMessage("");
+
+            // Replace temp message with real one
+            setMessages(prev => prev.map(m => m.id === tempId ? sentMsg : m));
         } catch (err) {
             console.error("Failed to send message", err);
+            // Revert on failure
+            setMessages(prev => prev.filter(m => m.id !== tempId));
+            alert("Mesaj gönderilemedi.");
+            setNewMessage(tempMsg.text || ""); // Restore text
         } finally {
             setSending(false);
         }
@@ -75,16 +138,41 @@ export default function ChatDetailPage() {
     if (loading) {
         return (
             <div className="flex h-[calc(100vh-200px)] items-center justify-center">
-                <Loader2 className="h-8 w-8 animate-spin text-purple-600" />
+                <Loader2 className="h-8 w-8 animate-spin text-red-600" />
             </div>
         );
     }
 
     return (
-        <div className="flex flex-col h-[calc(100vh-130px)] max-w-3xl mx-auto bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm overflow-hidden my-4">
+        <div className="flex flex-col h-[calc(100vh-130px)] max-w-3xl mx-auto bg-white rounded-3xl border border-gray-100 shadow-xl overflow-hidden my-4">
             {/* Header */}
-            <div className="p-4 border-b border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-800/50">
-                <h2 className="font-semibold text-gray-900 dark:text-white">Sohbet</h2>
+            <div className="p-4 border-b border-gray-100 bg-white flex items-center justify-between shadow-sm relative z-10">
+                <div
+                    onClick={() => chatMeta?.listing_id && router.push(`/listings/${chatMeta.listing_id}`)}
+                    className={`flex items-center gap-3 ${chatMeta?.listing_id ? 'cursor-pointer hover:bg-gray-50 p-2 -ml-2 rounded-xl transition-colors' : ''}`}
+                >
+                    {chatMeta?.listing_image ? (
+                        <div className="w-12 h-12 rounded-lg bg-gray-100 overflow-hidden border border-gray-200">
+                            <img src={chatMeta.listing_image} alt="Product" className="w-full h-full object-cover" />
+                        </div>
+                    ) : (
+                        <div className="w-12 h-12 rounded-lg bg-gray-100 flex items-center justify-center text-gray-400">
+                            <span className="text-xs">No Img</span>
+                        </div>
+                    )}
+
+                    <div>
+                        <h2 className="font-bold text-lg text-gray-900 leading-tight">
+                            {chatMeta?.other_user_name || "Sohbet"}
+                        </h2>
+                        {chatMeta?.listing_title && (
+                            <p className="text-xs font-medium text-gray-500 flex items-center gap-1">
+                                <span className="w-1.5 h-1.5 rounded-full bg-red-500 inline-block"></span>
+                                {chatMeta.listing_title}
+                            </p>
+                        )}
+                    </div>
+                </div>
             </div>
 
             {/* Messages Area */}
@@ -102,13 +190,13 @@ export default function ChatDetailPage() {
                                 className={`flex ${isMe ? 'justify-end' : 'justify-start'}`}
                             >
                                 <div
-                                    className={`max-w-[75%] rounded-2xl px-4 py-2 text-sm ${isMe
-                                        ? 'bg-purple-600 text-white rounded-br-none'
-                                        : 'bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-bl-none'
+                                    className={`max-w-[75%] rounded-2xl px-5 py-3 text-sm shadow-sm ${isMe
+                                        ? 'bg-red-600 text-white rounded-br-none'
+                                        : 'bg-gray-100 text-gray-900 rounded-bl-none'
                                         }`}
                                 >
-                                    <p>{msg.text}</p>
-                                    <span className={`text-[10px] block mt-1 ${isMe ? 'text-purple-200' : 'text-gray-500'}`}>
+                                    <p className="font-medium">{msg.text}</p>
+                                    <span className={`text-[10px] block mt-1.5 font-medium opacity-70 ${isMe ? 'text-white' : 'text-gray-500'}`}>
                                         {msg.created_at ? new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''}
                                     </span>
                                 </div>
@@ -120,19 +208,19 @@ export default function ChatDetailPage() {
             </div>
 
             {/* Input Area */}
-            <form onSubmit={handleSend} className="p-4 border-t border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900">
+            <form onSubmit={handleSend} className="p-4 border-t border-gray-100 bg-white">
                 <div className="flex gap-2">
                     <input
                         type="text"
                         value={newMessage}
                         onChange={(e) => setNewMessage(e.target.value)}
                         placeholder="Bir mesaj yazın..."
-                        className="flex-1 rounded-full border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
+                        className="flex-1 rounded-full border-2 border-gray-100 bg-gray-50 px-6 py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:border-red-500 focus:ring-0 transition-all font-medium"
                     />
                     <button
                         type="submit"
                         disabled={sending || !newMessage.trim()}
-                        className="p-2 rounded-full bg-purple-600 text-white hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                        className="p-3 rounded-full bg-red-600 text-white hover:bg-black disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 shadow-lg hover:shadow-red-500/25 active:scale-95"
                     >
                         {sending ? <Loader2 className="h-5 w-5 animate-spin" /> : <Send className="h-5 w-5" />}
                     </button>

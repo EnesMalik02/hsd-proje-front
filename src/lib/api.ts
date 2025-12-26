@@ -1,6 +1,7 @@
-import { UserLogin, UserRegister, Token, UserResponse, ListingCreate, ListingResponse, UserUpdate, ChatListResponse, MessageResponse, MessageCreate } from "./types";
+import { UserLogin, UserRegister, Token, UserResponse, ListingCreate, ListingResponse, UserUpdate, ChatListResponse, MessageResponse, MessageCreate, RequestCreate, RequestResponse, NotificationResponse } from "./types";
 
 const API_URL = "https://hsd-proje.onrender.com";
+//const API_URL = "http://localhost:8000";
 
 // Helper to set cookie
 function setCookie(name: string, value: string, days: number) {
@@ -84,6 +85,12 @@ export const authApi = {
         });
     },
 
+    getUser: async (uid: string): Promise<UserResponse> => {
+        return request<UserResponse>(`/users/${uid}`, {
+            method: "GET",
+        });
+    },
+
     logout: () => {
         if (typeof window !== "undefined") {
             localStorage.removeItem("access_token");
@@ -138,6 +145,13 @@ export const chatApi = {
         });
     },
 
+    startChat: async (data: { listing_id: string }): Promise<ChatListResponse> => {
+        return request<ChatListResponse>("/chats/start", {
+            method: "POST",
+            body: JSON.stringify(data),
+        });
+    },
+
     getChatMessages: async (chatId: string): Promise<MessageResponse[]> => {
         return request<MessageResponse[]>(`/chats/${chatId}/messages`, {
             method: "GET",
@@ -148,6 +162,42 @@ export const chatApi = {
         return request<MessageResponse>(`/chats/${chatId}/messages`, {
             method: "POST",
             body: JSON.stringify(data),
+        });
+    }
+};
+
+export const requestApi = {
+    createRequest: async (data: RequestCreate): Promise<RequestResponse> => {
+        return request<RequestResponse>("/requests/", {
+            method: "POST",
+            body: JSON.stringify(data),
+        });
+    },
+
+    getRequests: async (role: "requester" | "seller"): Promise<RequestResponse[]> => {
+        return request<RequestResponse[]>(`/requests/?role=${role}`, {
+            method: "GET",
+        });
+    },
+
+    updateRequestStatus: async (requestId: string, status: string): Promise<RequestResponse> => {
+        return request<RequestResponse>(`/requests/${requestId}/status`, {
+            method: "PUT",
+            body: JSON.stringify({ status }),
+        });
+    }
+};
+
+export const notificationApi = {
+    getMyNotifications: async (): Promise<NotificationResponse[]> => {
+        return request<NotificationResponse[]>("/notifications/", {
+            method: "GET",
+        });
+    },
+
+    markRead: async (notificationId: string): Promise<NotificationResponse> => {
+        return request<NotificationResponse>(`/notifications/${notificationId}/read`, {
+            method: "PUT",
         });
     }
 };

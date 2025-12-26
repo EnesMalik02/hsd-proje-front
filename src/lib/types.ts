@@ -106,6 +106,12 @@ export interface ChatListResponse {
     last_message?: string | null;
     last_message_time?: string | null;
     unread_count?: Record<string, number>;
+    listing_title?: string;
+    listing_image?: string;
+}
+
+export interface ChatStart {
+    listing_id: string;
 }
 
 export interface MessageResponse {
@@ -141,4 +147,45 @@ export interface Province {
 export interface ProvinceApiResponse {
     status: string;
     data: Province[];
+}
+
+
+export interface RequestCreate {
+    listing_id: string;
+    message: string;
+}
+
+export interface RequestUpdate {
+    status: string;
+}
+
+export interface ListingSnapshot {
+    title: string;
+    image?: string | null;
+    price: number;
+}
+
+export interface RequestResponse {
+    listing_id: string;
+    message: string;
+    id: string;
+    requester_id: string;
+    requester_name: string;
+    requester_avatar?: string | null;
+    requester_role: string;
+    seller_id: string;
+    listing_snapshot: ListingSnapshot;
+    status: string;
+    created_at?: string | null;
+}
+
+export interface NotificationResponse {
+    recipient_id: string;
+    type: string;
+    title: string;
+    body: string;
+    related_item_id?: string | null;
+    id: string;
+    is_read: boolean;
+    created_at?: string | null;
 }

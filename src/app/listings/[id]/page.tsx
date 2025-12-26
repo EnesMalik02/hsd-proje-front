@@ -3,22 +3,28 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import { authApi } from "@/lib/api";
-import { ListingResponse } from "@/lib/types";
+import { authApi, chatApi, requestApi } from "@/lib/api";
+import { ChatListResponse, ListingResponse } from "@/lib/types";
 import Navbar from "@/components/Navbar";
 import {
     Search, Heart, Share2, MapPin,
     Bed, Bath, Ruler, Calendar, CheckCircle2,
     Phone, CalendarDays, Hexagon, Loader2,
-    Tag, Gift
+    Tag, Gift, MessageCircle, Send, X
 } from "lucide-react";
 
 export default function ListingDetailPage() {
     const params = useParams();
+    const router = useRouter();
     const [listing, setListing] = useState<ListingResponse | null>(null);
     const [loading, setLoading] = useState(true);
     const [activeImage, setActiveImage] = useState(0);
     const [isDonation, setIsDonation] = useState(false);
+    const [myChats, setMyChats] = useState<ChatListResponse[]>([]);
+    const [showMessageModal, setShowMessageModal] = useState(false);
+    const [messageText, setMessageText] = useState("");
+    const [sendingRequest, setSendingRequest] = useState(false);
+    const [requestSent, setRequestSent] = useState(false);
 
     useEffect(() => {
         const fetchListing = async () => {
@@ -31,14 +37,42 @@ export default function ListingDetailPage() {
                 setLoading(false);
             }
         };
+
+        const fetchChats = async () => {
+            try {
+                const chats = await chatApi.getMyChats();
+                setMyChats(chats);
+            } catch (err) {
+                console.error("Failed to fetch chats", err);
+            }
+        }
+
         if (params.id) {
             fetchListing();
+            fetchChats();
         }
     }, [params.id]);
 
     useEffect(() => {
         setIsDonation(listing?.price === 0 || listing?.type === 'donation');
     }, [listing]);
+
+    const handleMessage = async () => {
+        if (!listing) return;
+        setSendingRequest(true);
+        try {
+            // Updated system: Check for existing chat or start new one directly
+            const chat = await chatApi.startChat({ listing_id: listing.id });
+            router.push(`/messages/${chat.id}`);
+        } catch (err) {
+            console.error("Failed to start chat", err);
+            // Fallback: If startChat fails, maybe check existing list but startChat should return existing if any
+            // Alert user
+            alert("Sohbet başlatılırken bir hata oluştu.");
+        } finally {
+            setSendingRequest(false);
+        }
+    };
 
     if (loading) {
         return (
@@ -231,6 +265,15 @@ export default function ListingDetailPage() {
                                         <Phone className="w-4 h-4" />
                                         Contact {listing.type === 'donation' ? 'Donor' : 'Seller'}
                                     </button>
+
+                                    <button
+                                        onClick={handleMessage}
+                                        disabled={sendingRequest}
+                                        className="w-full bg-white border-2 border-red-600 text-red-600 font-bold py-3 rounded-xl hover:bg-red-50 transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                                    >
+                                        {sendingRequest ? <Loader2 className="w-4 h-4 animate-spin" /> : <MessageCircle className="w-4 h-4" />}
+                                        Mesaj Gönder
+                                    </button>
                                     {/* 
                             <button className="w-full bg-white border-2 border-red-600 text-red-600 font-bold py-3 rounded-xl hover:bg-red-50 transition-colors flex items-center justify-center gap-2">
                                 <CalendarDays className="w-4 h-4" />
@@ -281,6 +324,7 @@ export default function ListingDetailPage() {
                 </div>
                 © 2024 HSD Proje. All rights reserved.
             </footer>
+
         </div>
     );
 }
