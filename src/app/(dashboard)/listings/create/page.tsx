@@ -4,6 +4,8 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { authApi } from "@/lib/api";
 import { ListingCreate } from "@/lib/types";
+import { compressImage } from "@/lib/imageUtils";
+import { Loader2, X, Plus } from "lucide-react";
 
 export default function CreateListingPage() {
     const router = useRouter();
@@ -13,7 +15,7 @@ export default function CreateListingPage() {
     const [formData, setFormData] = useState<ListingCreate>({
         title: "",
         description: "",
-        images: [], // Simulating images for now
+        images: [],
         category: "other",
         type: "sale",
         price: 0,
@@ -27,26 +29,69 @@ export default function CreateListingPage() {
         status: "active"
     });
 
-    const [imageUrl, setImageUrl] = useState("");
+    const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const files = e.target.files;
+        if (!files) return;
 
-    const handleAddImage = () => {
-        if (imageUrl) {
-            setFormData(prev => ({ ...prev, images: [...prev.images, imageUrl] }));
-            setImageUrl("");
+        setError(null);
+        setLoading(true);
+
+        try {
+            const newImages: string[] = [];
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                // Check if already 3 images
+                if (formData.images.length + newImages.length >= 3) {
+                    setError("En fazla 3 görsel yükleyebilirsiniz.");
+                    break;
+                }
+
+                const compressedBase64 = await compressImage(file);
+                newImages.push(compressedBase64);
+            }
+
+            setFormData(prev => ({
+                ...prev,
+                images: [...prev.images, ...newImages]
+            }));
+        } catch (err: unknown) {
+            console.error(err);
+            if (err instanceof Error) {
+                setError(err.message);
+            } else {
+                setError("Görsel yüklenirken bir sorun oluştu.");
+            }
+        } finally {
+            setLoading(false);
+            // Reset input
+            e.target.value = "";
         }
-    }
+    };
+
+    const removeImage = (index: number) => {
+        setFormData(prev => ({
+            ...prev,
+            images: prev.images.filter((_, i) => i !== index)
+        }));
+    };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
         setError(null);
 
+        if (formData.images.length === 0) {
+            setError("Lütfen en az bir görsel yükleyin.");
+            setLoading(false);
+            return;
+        }
+
         try {
             await authApi.createListing(formData);
             router.push("/");
-        } catch (err: any) {
+        } catch (err: unknown) {
             console.error(err);
-            setError("İlan oluşturulurken bir hata oluştu.");
+            setError("İlan oluşturulurken bir hata oluştu. Lütfen tekrar deneyin.");
         } finally {
             setLoading(false);
         }
@@ -63,10 +108,43 @@ export default function CreateListingPage() {
 
             <form onSubmit={handleSubmit} className="space-y-6 bg-white dark:bg-gray-900 p-6 rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm">
                 {error && (
-                    <div className="p-4 bg-red-50 text-red-600 rounded-lg text-sm border border-red-100">
+                    <div className="p-4 bg-red-50 text-red-600 rounded-lg text-sm border border-red-100 dark:bg-red-900/20 dark:text-red-400 dark:border-red-800">
                         {error}
                     </div>
                 )}
+
+                {/* Images Section */}
+                <div className="space-y-2">
+                    <label className="text-sm font-medium text-gray-900 dark:text-gray-200">Görseller (Max 3)</label>
+                    <div className="grid grid-cols-3 gap-4">
+                        {formData.images.map((img, i) => (
+                            <div key={i} className="relative aspect-square rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700 group">
+                                <img src={img} alt={`Preview ${i}`} className="w-full h-full object-cover" />
+                                <button
+                                    type="button"
+                                    onClick={() => removeImage(i)}
+                                    className="absolute top-1 right-1 p-1 bg-black/50 hover:bg-black/70 text-white rounded-full transition-colors opacity-0 group-hover:opacity-100"
+                                >
+                                    <X className="w-4 h-4" />
+                                </button>
+                            </div>
+                        ))}
+
+                        {formData.images.length < 3 && (
+                            <label className="relative aspect-square flex flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-700 hover:border-purple-500 hover:bg-purple-50 dark:hover:bg-purple-900/10 transition-colors cursor-pointer">
+                                <Plus className="w-8 h-8 text-gray-400 mb-2" />
+                                <span className="text-xs text-gray-500">Görsel Ekle</span>
+                                <input
+                                    type="file"
+                                    accept="image/*"
+                                    className="hidden"
+                                    onChange={handleImageUpload}
+                                    multiple
+                                />
+                            </label>
+                        )}
+                    </div>
+                </div>
 
                 <div className="space-y-2">
                     <label className="text-sm font-medium text-gray-900 dark:text-gray-200">İlan Başlığı</label>
@@ -169,42 +247,19 @@ export default function CreateListingPage() {
                     </div>
                 </div>
 
-                {/* Image URL Input (Temporary) */}
-                <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-900 dark:text-gray-200">Görsel URL (Opsiyonel)</label>
-                    <div className="flex gap-2">
-                        <input
-                            type="url"
-                            className="flex h-10 w-full rounded-md border border-gray-300 dark:border-gray-700 bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
-                            value={imageUrl}
-                            onChange={(e) => setImageUrl(e.target.value)}
-                            placeholder="https://example.com/image.jpg"
-                        />
-                        <button
-                            type="button"
-                            onClick={handleAddImage}
-                            className="px-4 py-2 bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 rounded-md text-sm font-medium transition-colors"
-                        >
-                            Ekle
-                        </button>
-                    </div>
-                    {formData.images.length > 0 && (
-                        <div className="flex gap-2 mt-2">
-                            {formData.images.map((img, i) => (
-                                <div key={i} className="relative w-16 h-16 rounded overflow-hidden border border-gray-200">
-                                    <img src={img} alt="Preview" className="w-full h-full object-cover" />
-                                </div>
-                            ))}
-                        </div>
-                    )}
-                </div>
-
                 <button
                     className="w-full inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white h-11 shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
                     type="submit"
                     disabled={loading}
                 >
-                    {loading ? "Oluşturuluyor..." : "İlanı Yayınla"}
+                    {loading ? (
+                        <div className="flex items-center gap-2">
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                            <span>İşleniyor...</span>
+                        </div>
+                    ) : (
+                        "İlanı Yayınla"
+                    )}
                 </button>
             </form>
         </div>
