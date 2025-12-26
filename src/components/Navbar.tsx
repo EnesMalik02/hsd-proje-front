@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Hexagon, Search } from "lucide-react";
+import { Hexagon, Search, Home, List, MessageSquare, User } from "lucide-react";
 
 export default function Navbar() {
     return (
@@ -21,13 +21,25 @@ export default function Navbar() {
                         className="bg-transparent border-none outline-none text-sm ml-2 w-full placeholder-gray-400"
                     />
                 </div>
-                <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-gray-600">
-                    <Link href="/" className="hover:text-red-600 transition-colors">Home</Link>
-                    <Link href="#" className="hover:text-red-600 transition-colors">Listings</Link>
-                    <Link href="#" className="hover:text-red-600 transition-colors">Services</Link>
-                    <Link href="#" className="hover:text-red-600 transition-colors">Contact</Link>
-                </nav>
             </div>
+            <nav className="hidden md:flex items-center gap-6 text-sm font-bold text-gray-700">
+                <Link href="/" className="flex items-center gap-2 hover:text-red-600 transition-colors">
+                    <Home className="w-4 h-4" />
+                    Ana Sayfa
+                </Link>
+                <Link href="#" className="flex items-center gap-2 hover:text-red-600 transition-colors">
+                    <List className="w-4 h-4" />
+                    Listelemelerim
+                </Link>
+                <Link href="/messages" className="flex items-center gap-2 hover:text-red-600 transition-colors">
+                    <MessageSquare className="w-4 h-4" />
+                    Mesajlarım
+                </Link>
+                <Link href="/profile" className="flex items-center gap-2 hover:text-red-600 transition-colors">
+                    <User className="w-4 h-4" />
+                    Profilim
+                </Link>
+            </nav>
         </header>
     );
 }
