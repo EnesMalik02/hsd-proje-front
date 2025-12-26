@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { authApi } from "@/lib/api";
 import { ListingResponse } from "@/lib/types";
 import { ListingCard } from "@/components/ListingCard";
@@ -9,15 +9,19 @@ import { Loader2, Search, Filter, ArrowUpDown, ChevronDown } from "lucide-react"
 
 export default function Home() {
     const router = useRouter();
+    const searchParams = useSearchParams();
+    const query = searchParams.get("q");
+
     const [listings, setListings] = useState<ListingResponse[]>([]);
     const [userName, setUserName] = useState<string>("User");
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    const [searchTerm, setSearchTerm] = useState("");
+    const [searchTerm, setSearchTerm] = useState(query || "");
     const [statusFilter, setStatusFilter] = useState("All Statuses");
 
     useEffect(() => {
         const fetchData = async () => {
+            setLoading(true);
             try {
                 // Fetch user data
                 try {
@@ -29,7 +33,12 @@ export default function Home() {
                     console.log("Could not fetch user name");
                 }
 
-                const data = await authApi.getSuggestedListings();
+                let data;
+                if (query) {
+                    data = await authApi.getListings(query);
+                } else {
+                    data = await authApi.getSuggestedListings();
+                }
                 setListings(data);
             } catch (err) {
                 console.error("Failed to fetch listings:", err);
@@ -40,7 +49,7 @@ export default function Home() {
         };
 
         fetchData();
-    }, []);
+    }, [query]);
 
     return (
         <div className="space-y-8">
@@ -62,6 +71,11 @@ export default function Home() {
                         className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all text-sm font-medium"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
+                        onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                                router.push(`/?q=${searchTerm}`);
+                            }
+                        }}
                     />
                 </div>
                 <div className="flex gap-4">

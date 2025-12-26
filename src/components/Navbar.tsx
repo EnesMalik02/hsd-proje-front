@@ -17,14 +17,6 @@ export default function Navbar() {
                         </div>
                         <span className="text-xl font-bold tracking-tight text-gray-900">HSD Proje</span>
                     </Link>
-                    <div className="hidden md:flex items-center bg-gray-100 rounded-full px-4 py-2 w-64">
-                        <Search className="w-4 h-4 text-gray-400" />
-                        <input
-                            type="text"
-                            placeholder="İlanlarda ara..."
-                            className="bg-transparent border-none outline-none text-sm ml-2 w-full placeholder-gray-400"
-                        />
-                    </div>
                 </div>
 
                 {/* Desktop Navigation */}
@@ -55,15 +47,6 @@ export default function Navbar() {
             {/* Mobile Navigation Menu */}
             {isMobileMenuOpen && (
                 <div className="md:hidden border-t border-gray-100 bg-white px-6 py-4 animate-in slide-in-from-top-2">
-                    <div className="flex items-center bg-gray-100 rounded-lg px-4 py-2 mb-4">
-                        <Search className="w-4 h-4 text-gray-400" />
-                        <input
-                            type="text"
-                            placeholder="Ara..."
-                            className="bg-transparent border-none outline-none text-sm ml-2 w-full"
-                        />
-                    </div>
-
                     <nav className="flex flex-col gap-4">
                         <Link
                             href="/"

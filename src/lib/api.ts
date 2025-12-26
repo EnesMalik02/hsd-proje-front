@@ -130,6 +130,13 @@ export const authApi = {
         });
     },
 
+    getListings: async (q?: string): Promise<ListingResponse[]> => {
+        const query = q ? `?q=${encodeURIComponent(q)}` : "";
+        return request<ListingResponse[]>(`/listings/${query}`, {
+            method: "GET",
+        });
+    },
+
     updateListing: async (id: string, data: any): Promise<ListingResponse> => {
         return request<ListingResponse>(`/listings/${id}`, {
             method: "PATCH",
