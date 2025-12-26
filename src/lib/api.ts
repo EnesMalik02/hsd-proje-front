@@ -31,9 +31,9 @@ export class ApiError extends Error {
 async function request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
     const token = typeof window !== "undefined" ? localStorage.getItem("access_token") : null;
 
-    const headers: HeadersInit = {
+    const headers: Record<string, string> = {
         "Content-Type": "application/json",
-        ...options.headers as any,
+        ...(options.headers as any),
     };
 
     if (token) {
