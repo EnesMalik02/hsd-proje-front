@@ -212,48 +212,7 @@ export default function ProfilePage() {
             {/* Right Content - Dashboard */}
             <div className="lg:col-span-8 space-y-8">
 
-                {/* Impact Dashboard */}
-                <div>
-                    <div className="flex items-center justify-between mb-4">
-                        <h2 className="text-xl font-bold text-gray-900">Impact Dashboard</h2>
-                        <a href="#" className="text-sm font-medium text-red-600 hover:underline">View detailed report</a>
-                    </div>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div className="bg-white p-5 rounded-xl border border-gray-200 shadow-sm relative overflow-hidden group">
-                            <div className="flex justify-between items-start mb-2">
-                                <span className="text-gray-500 text-xs font-bold uppercase tracking-wider">Carbon Saved</span>
-                                <div className="p-1.5 bg-green-50 rounded-lg text-green-600">
-                                    <Leaf className="w-4 h-4" />
-                                </div>
-                            </div>
-                            <div className="text-3xl font-extrabold text-gray-900">
-                                {displayUser.stats?.carbon_saved || 0}<span className="text-sm text-gray-400 font-medium ml-1">kg</span>
-                            </div>
-                        </div>
-                        <div className="bg-white p-5 rounded-xl border border-gray-200 shadow-sm relative overflow-hidden group">
-                            <div className="flex justify-between items-start mb-2">
-                                <span className="text-gray-500 text-xs font-bold uppercase tracking-wider">Items Donated</span>
-                                <div className="p-1.5 bg-blue-50 rounded-lg text-blue-600">
-                                    <Gift className="w-4 h-4" />
-                                </div>
-                            </div>
-                            <div className="text-3xl font-extrabold text-gray-900">
-                                {displayUser.stats?.items_donated || 0}
-                            </div>
-                        </div>
-                        <div className="bg-white p-5 rounded-xl border border-gray-200 shadow-sm relative overflow-hidden group">
-                            <div className="flex justify-between items-start mb-2">
-                                <span className="text-gray-500 text-xs font-bold uppercase tracking-wider">Items Received</span>
-                                <div className="p-1.5 bg-purple-50 rounded-lg text-purple-600">
-                                    <Box className="w-4 h-4" />
-                                </div>
-                            </div>
-                            <div className="text-3xl font-extrabold text-gray-900">
-                                {displayUser.stats?.items_received || 0}
-                            </div>
-                        </div>
-                    </div>
-                </div>
+
 
                 {/* Content Tabs */}
                 <div>
