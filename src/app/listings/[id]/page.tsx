@@ -99,9 +99,17 @@ export default function ListingDetailPage() {
             {/* Breadcrumbs */}
             <div className="max-w-7xl mx-auto px-6 py-6">
                 <div className="flex items-center gap-2 text-xs font-medium text-gray-500">
-                    <Link href="/" className="hover:text-gray-900">Home</Link>
+                    <Link href="/" className="hover:text-gray-900">Ana Sayfa</Link>
                     <span>/</span>
-                    <span className="capitalize">{listing.category || "Listing"}</span>
+                    <span className="capitalize">{(() => {
+                        const map: Record<string, string> = {
+                            electronics: "Elektronik",
+                            clothing: "Giyim",
+                            home: "Ev & Yaşam",
+                            other: "Diğer"
+                        };
+                        return map[listing.category] || listing.category;
+                    })()}</span>
                     <span>/</span>
                     <span className="text-gray-900">{listing.title}</span>
                 </div>
@@ -127,7 +135,7 @@ export default function ListingDetailPage() {
                                     className="w-full h-full object-cover"
                                 />
                                 <div className="absolute bottom-4 right-4 bg-white/90 backdrop-blur px-3 py-1 rounded-lg text-xs font-bold text-gray-900">
-                                    {activeImage + 1} / {images.length} Photos
+                                    {activeImage + 1} / {images.length} Fotoğraf
                                 </div>
                             </div>
                             <div className="flex gap-4 overflow-x-auto pb-2 pl-1">
@@ -154,11 +162,11 @@ export default function ListingDetailPage() {
                             <div className="flex items-center gap-3 mb-4">
                                 <span className="bg-red-100 text-red-600 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider flex items-center gap-1">
                                     {listing.type === 'donation' ? <Gift className="w-3 h-3" /> : null}
-                                    {listing.type === 'donation' ? 'Donation' : 'For Sale'}
+                                    {listing.type === 'donation' ? 'Bağış' : 'Satılık'}
                                 </span>
                                 <div className="flex items-center gap-1 text-gray-500 text-xs font-medium">
                                     <CalendarDays className="w-3 h-3" />
-                                    Listed {new Date(listing.created_at || Date.now()).toLocaleDateString()}
+                                    Yayınlandı {new Date(listing.created_at || Date.now()).toLocaleDateString()}
                                 </div>
                             </div>
                             <h1 className="text-4xl font-extrabold text-gray-900 mb-2 leading-tight break-words">
@@ -175,14 +183,22 @@ export default function ListingDetailPage() {
                         <div className="grid grid-cols-4 gap-4">
                             <div className="border border-gray-100 rounded-2xl p-4 flex flex-col items-center justify-center text-center bg-gray-50/50">
                                 <Tag className="w-6 h-6 text-red-600 mb-2" />
-                                <span className="block text-lg font-bold text-gray-900 capitalize">{listing.category}</span>
-                                <span className="text-xs text-gray-500">Category</span>
+                                <span className="block text-lg font-bold text-gray-900 capitalize">{(() => {
+                                    const map: Record<string, string> = {
+                                        electronics: "Elektronik",
+                                        clothing: "Giyim",
+                                        home: "Ev & Yaşam",
+                                        other: "Diğer"
+                                    };
+                                    return map[listing.category] || listing.category;
+                                })()}</span>
+                                <span className="text-xs text-gray-500">Kategori</span>
                             </div>
                         </div>
 
                         {/* About */}
                         <div>
-                            <h2 className="text-xl font-bold text-gray-900 mb-4">About this item</h2>
+                            <h2 className="text-xl font-bold text-gray-900 mb-4">Ürün Hakkında</h2>
                             <p className="text-gray-600 leading-relaxed whitespace-pre-wrap">
                                 {listing.description}
                             </p>
@@ -190,7 +206,7 @@ export default function ListingDetailPage() {
 
                         {/* Location Map Placeholder */}
                         <div>
-                            <h2 className="text-xl font-bold text-gray-900 mb-6">Location</h2>
+                            <h2 className="text-xl font-bold text-gray-900 mb-6">Konum</h2>
                             <div className="w-full h-80 bg-gray-100 rounded-2xl relative overflow-hidden flex items-center justify-center">
                                 <iframe
                                     width="100%"
@@ -217,7 +233,7 @@ export default function ListingDetailPage() {
                                         {isDonation ? (
                                             ''
                                         ) : (
-                                            'Listing Price'
+                                            'İlan Fiyatı'
                                         )}
                                     </div>
                                     {isDonation ? (
@@ -255,7 +271,7 @@ export default function ListingDetailPage() {
                                     <div>
                                         <div className="font-bold text-gray-900 text-lg">{listing.owner_name}</div>
                                         <div className="text-xs text-gray-500 flex items-center gap-1">
-                                            Lister
+                                            İlan Sahibi
                                         </div>
                                     </div>
                                 </div>
@@ -263,7 +279,7 @@ export default function ListingDetailPage() {
                                 <div className="space-y-3">
                                     <button className="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-xl transition-colors flex items-center justify-center gap-2">
                                         <Phone className="w-4 h-4" />
-                                        Contact {listing.type === 'donation' ? 'Donor' : 'Seller'}
+                                        {listing.type === 'donation' ? 'Bağışçıyla' : 'Satıcıyla'} İletişime Geç
                                     </button>
 
                                     <button
@@ -287,13 +303,13 @@ export default function ListingDetailPage() {
                                         <div className="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center shadow-sm">
                                             <Heart className="w-4 h-4" />
                                         </div>
-                                        <span className="text-[10px] font-medium uppercase">Save</span>
+                                        <span className="text-[10px] font-medium uppercase">Kaydet</span>
                                     </button>
                                     <button className="flex flex-col items-center justify-center gap-1 text-gray-400 hover:text-red-600 transition-colors">
                                         <div className="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center shadow-sm">
                                             <Share2 className="w-4 h-4" />
                                         </div>
-                                        <span className="text-[10px] font-medium uppercase">Share</span>
+                                        <span className="text-[10px] font-medium uppercase">Paylaş</span>
                                     </button>
                                 </div>
                             </div>
@@ -304,9 +320,9 @@ export default function ListingDetailPage() {
                                     <CheckCircle2 className="w-3 h-3 text-white" />
                                 </div>
                                 <div>
-                                    <div className="text-sm font-bold text-gray-900">HSD Verified Listing</div>
+                                    <div className="text-sm font-bold text-gray-900">HSD Onaylı İlan</div>
                                     <p className="text-xs text-gray-500 mt-1 leading-relaxed">
-                                        This item has been verified for authenticity and condition.
+                                        Bu ürünün orijinalliği ve durumu doğrulanmıştır.
                                     </p>
                                 </div>
                             </div>
@@ -322,7 +338,7 @@ export default function ListingDetailPage() {
                     </div>
                     <span className="text-base font-bold text-gray-900">HSD Proje</span>
                 </div>
-                © 2024 HSD Proje. All rights reserved.
+                © 2024 HSD Proje. Tüm hakları saklıdır.
             </footer>
 
         </div>

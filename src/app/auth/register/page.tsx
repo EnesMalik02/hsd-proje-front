@@ -50,17 +50,17 @@ export default function RegisterPage() {
             {/* Toggle Tabs */}
             <div className="flex bg-gray-100 p-1 rounded-xl mb-8 w-64">
                 <Link href="/auth/login" className="flex-1 py-1.5 text-center text-sm font-medium text-gray-500 rounded-lg transition-colors hover:text-gray-900">
-                    Login
+                    Giriş Yap
                 </Link>
                 <div className="flex-1 py-1.5 text-center text-sm font-medium text-gray-900 bg-white rounded-lg shadow-sm">
-                    Register
+                    Kayıt Ol
                 </div>
             </div>
 
             <div className="w-full bg-white rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] p-8 border border-gray-100">
                 <div className="text-center mb-8">
-                    <h1 className="text-2xl font-bold text-gray-900">Create Account</h1>
-                    <p className="text-sm text-gray-500 mt-2">Join us to access HSD Proje API features</p>
+                    <h1 className="text-2xl font-bold text-gray-900">Hesap Oluştur</h1>
+                    <p className="text-sm text-gray-500 mt-2">HSD Proje özelliklerine erişmek için bize katılın</p>
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-4">
@@ -72,7 +72,7 @@ export default function RegisterPage() {
 
                     <div className="space-y-1.5">
                         <label className="text-xs font-semibold text-gray-700 ml-1" htmlFor="display_name">
-                            Display Name
+                            Ad Soyad
                         </label>
                         <div className="relative">
                             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -83,7 +83,7 @@ export default function RegisterPage() {
                                 type="text"
                                 required
                                 className="block w-full pl-10 pr-3 py-2.5 border border-gray-200 rounded-lg text-sm bg-gray-50 placeholder-gray-400 focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-all font-medium text-gray-900"
-                                placeholder="John Doe"
+                                placeholder="Ad Soyad"
                                 value={formData.display_name}
                                 onChange={(e) => setFormData({ ...formData, display_name: e.target.value })}
                             />
@@ -92,7 +92,7 @@ export default function RegisterPage() {
 
                     <div className="space-y-1.5">
                         <label className="text-xs font-semibold text-gray-700 ml-1" htmlFor="username">
-                            Username
+                            Kullanıcı Adı
                         </label>
                         <div className="relative">
                             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -103,7 +103,7 @@ export default function RegisterPage() {
                                 type="text"
                                 required
                                 className="block w-full pl-10 pr-3 py-2.5 border border-gray-200 rounded-lg text-sm bg-gray-50 placeholder-gray-400 focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-all font-medium text-gray-900"
-                                placeholder="johndoe"
+                                placeholder="Kullanıcı Adı"
                                 value={formData.username}
                                 onChange={(e) => setFormData({ ...formData, username: e.target.value })}
                             />
@@ -112,7 +112,7 @@ export default function RegisterPage() {
 
                     <div className="space-y-1.5">
                         <label className="text-xs font-semibold text-gray-700 ml-1" htmlFor="email">
-                            Email Address
+                            E-posta Adresi
                         </label>
                         <div className="relative">
                             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -123,7 +123,7 @@ export default function RegisterPage() {
                                 type="email"
                                 required
                                 className="block w-full pl-10 pr-3 py-2.5 border border-gray-200 rounded-lg text-sm bg-gray-50 placeholder-gray-400 focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-all font-medium text-gray-900"
-                                placeholder="name@company.com"
+                                placeholder="ornek@sirket.com"
                                 value={formData.email}
                                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                             />
@@ -132,7 +132,7 @@ export default function RegisterPage() {
 
                     <div className="space-y-1.5">
                         <label className="text-xs font-semibold text-gray-700 ml-1" htmlFor="password">
-                            Password
+                            Şifre
                         </label>
                         <div className="relative">
                             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -163,15 +163,15 @@ export default function RegisterPage() {
                         disabled={loading}
                         className="w-full bg-[#ef4444] hover:bg-red-600 text-white font-semibold py-2.5 rounded-lg transition-colors shadow-sm mt-4 text-sm"
                     >
-                        {loading ? "Registering..." : "Register"}
+                        {loading ? "Kayıt olunuyor..." : "Kayıt Ol"}
                     </button>
                 </form>
             </div>
 
             <div className="mt-8 text-sm text-gray-500">
-                Already have an account?{" "}
+                Zaten hesabınız var mı?{" "}
                 <Link href="/auth/login" className="font-semibold text-gray-900 hover:text-red-600 transition-colors">
-                    Login
+                    Giriş Yap
                 </Link>
             </div>
         </div>

@@ -48,17 +48,17 @@ export default function LoginPage() {
             {/* Toggle Tabs */}
             <div className="flex bg-gray-100 p-1 rounded-xl mb-8 w-64">
                 <div className="flex-1 py-1.5 text-center text-sm font-medium text-gray-900 bg-white rounded-lg shadow-sm">
-                    Login
+                    Giriş Yap
                 </div>
                 <Link href="/auth/register" className="flex-1 py-1.5 text-center text-sm font-medium text-gray-500 rounded-lg transition-colors hover:text-gray-900">
-                    Register
+                    Kayıt Ol
                 </Link>
             </div>
 
             <div className="w-full bg-white rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] p-8 border border-gray-100">
                 <div className="text-center mb-8">
-                    <h1 className="text-2xl font-bold text-gray-900">Welcome Back</h1>
-                    <p className="text-sm text-gray-500 mt-2">Join us to access HSD Proje API features</p>
+                    <h1 className="text-2xl font-bold text-gray-900">Tekrar Hoş Geldiniz</h1>
+                    <p className="text-sm text-gray-500 mt-2">HSD Proje özelliklerine erişmek için giriş yapın</p>
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-4">
@@ -70,7 +70,7 @@ export default function LoginPage() {
 
                     <div className="space-y-1.5">
                         <label className="text-xs font-semibold text-gray-700 ml-1" htmlFor="identifier">
-                            Email or Username
+                            E-posta veya Kullanıcı Adı
                         </label>
                         <div className="relative">
                             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -81,7 +81,7 @@ export default function LoginPage() {
                                 type="text"
                                 required
                                 className="block w-full pl-10 pr-3 py-2.5 border border-gray-200 rounded-lg text-sm bg-gray-50 placeholder-gray-400 focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-all font-medium text-gray-900"
-                                placeholder="email or username"
+                                placeholder="E-posta veya kullanıcı adı"
                                 value={formData.identifier}
                                 onChange={(e) => setFormData({ ...formData, identifier: e.target.value })}
                             />
@@ -90,7 +90,7 @@ export default function LoginPage() {
 
                     <div className="space-y-1.5">
                         <label className="text-xs font-semibold text-gray-700 ml-1" htmlFor="password">
-                            Password
+                            Şifre
                         </label>
                         <div className="relative">
                             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -120,15 +120,15 @@ export default function LoginPage() {
                         disabled={loading}
                         className="w-full bg-[#ef4444] hover:bg-red-600 text-white font-semibold py-2.5 rounded-lg transition-colors shadow-sm mt-4 text-sm"
                     >
-                        {loading ? "Logging in..." : "Login"}
+                        {loading ? "Giriş yapılıyor..." : "Giriş Yap"}
                     </button>
                 </form>
             </div>
 
             <div className="mt-8 text-sm text-gray-500">
-                Don't have an account?{" "}
+                Hesabınız yok mu?{" "}
                 <Link href="/auth/register" className="font-semibold text-gray-900 hover:text-red-600 transition-colors">
-                    Register
+                    Kayıt Ol
                 </Link>
             </div>
         </div>

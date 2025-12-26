@@ -13,7 +13,7 @@ interface MyListingsProps {
 
 export default function MyListings({ listings, onEdit }: MyListingsProps) {
     const [searchTerm, setSearchTerm] = useState("");
-    const [statusFilter, setStatusFilter] = useState("All Statuses");
+    const [statusFilter, setStatusFilter] = useState("Tüm Durumlar");
 
     const filteredListings = listings.filter(listing =>
         listing.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -28,7 +28,7 @@ export default function MyListings({ listings, onEdit }: MyListingsProps) {
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
                     <input
                         type="text"
-                        placeholder="Search your listings..."
+                        placeholder="İlanlarımda ara..."
                         className="w-full pl-10 pr-4 py-2 bg-gray-50 border border-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all text-sm font-medium"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
@@ -47,7 +47,7 @@ export default function MyListings({ listings, onEdit }: MyListingsProps) {
                         className="flex items-center gap-2 px-4 py-2 bg-red-600 border border-red-600 rounded-lg text-sm font-bold text-white hover:bg-red-700 transition-colors shadow-sm"
                     >
                         <Plus className="w-4 h-4" />
-                        New Listing
+                        Yeni İlan
                     </Link>
                 </div>
             </div>
@@ -69,8 +69,8 @@ export default function MyListings({ listings, onEdit }: MyListingsProps) {
             {/* Empty State */}
             {filteredListings.length === 0 && (
                 <div className="text-center py-20 bg-gray-50 rounded-xl border border-dashed border-gray-200">
-                    <p className="text-gray-500 font-medium mb-2">No listings found.</p>
-                    <p className="text-gray-400 text-sm">Create a new listing to get started.</p>
+                    <p className="text-gray-500 font-medium mb-2">İlan bulunamadı.</p>
+                    <p className="text-gray-400 text-sm">Başlamak için yeni bir ilan oluşturun.</p>
                 </div>
             )}
         </div>

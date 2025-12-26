@@ -38,7 +38,15 @@ export function ListingCard({ listing, onClick }: ListingCardProps) {
                     {/* New Category Location */}
                     {listing.category && (
                         <p className="text-[10px] font-bold text-red-600 uppercase tracking-wider mb-1">
-                            {listing.category}
+                            {(() => {
+                                const map: Record<string, string> = {
+                                    electronics: "ELEKTRONİK",
+                                    clothing: "GİYİM",
+                                    home: "EV & YAŞAM",
+                                    other: "DİĞER"
+                                };
+                                return map[listing.category] || listing.category;
+                            })()}
                         </p>
                     )}
 

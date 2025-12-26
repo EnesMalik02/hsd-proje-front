@@ -21,7 +21,7 @@ export default function Navbar() {
                         <Search className="w-4 h-4 text-gray-400" />
                         <input
                             type="text"
-                            placeholder="Search properties..."
+                            placeholder="İlanlarda ara..."
                             className="bg-transparent border-none outline-none text-sm ml-2 w-full placeholder-gray-400"
                         />
                     </div>
@@ -59,7 +59,7 @@ export default function Navbar() {
                         <Search className="w-4 h-4 text-gray-400" />
                         <input
                             type="text"
-                            placeholder="Search..."
+                            placeholder="Ara..."
                             className="bg-transparent border-none outline-none text-sm ml-2 w-full"
                         />
                     </div>

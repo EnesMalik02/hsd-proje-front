@@ -12,7 +12,7 @@ interface MyListingCardProps {
 export function MyListingCard({ listing, onEdit, onRequests, onViewHistory }: MyListingCardProps) {
     // Format date helper
     const formatDate = (dateString?: string) => {
-        if (!dateString) return "Recently";
+        if (!dateString) return "Yeni";
         return new Date(dateString).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
     };
 
@@ -28,13 +28,22 @@ export function MyListingCard({ listing, onEdit, onRequests, onViewHistory }: My
                     />
                 ) : (
                     <div className="w-full h-full flex items-center justify-center bg-gray-100 text-gray-400">
-                        No Image
+                        Görsel Yok
                     </div>
                 )}
 
                 {/* Status Badge */}
                 <div className="absolute top-3 left-3 bg-white/95 backdrop-blur-sm px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider text-gray-900 shadow-sm border border-gray-100">
-                    {listing.status || 'AVAILABLE'}
+                    {(() => {
+                        const s = listing.status || 'active';
+                        const map: Record<string, string> = {
+                            active: 'AKTİF',
+                            pending: 'BEKLİYOR',
+                            sold: 'SATILDI',
+                            available: 'AKTİF'
+                        };
+                        return map[s.toLowerCase()] || s.toUpperCase();
+                    })()}
                 </div>
 
                 {/* Pending Badge Mockup based on screenshot if needed, sticking to status for now */}
@@ -57,7 +66,7 @@ export function MyListingCard({ listing, onEdit, onRequests, onViewHistory }: My
                 </div>
 
                 <p className="text-gray-500 text-sm line-clamp-2 mb-4 flex-1">
-                    {listing.description || "No description provided."}
+                    {listing.description || "Açıklama girilmemiş."}
                 </p>
 
                 <div className="flex items-center justify-between mt-auto pt-3 border-t border-gray-50">
@@ -68,7 +77,7 @@ export function MyListingCard({ listing, onEdit, onRequests, onViewHistory }: My
 
                     <span className={`text-xs font-bold uppercase tracking-wider ${!listing.price || listing.price === 0 ? 'text-red-600' : 'text-gray-900'
                         }`}>
-                        {!listing.price || listing.price === 0 ? 'FREE' : listing.type === 'exchange' ? 'EXCHANGE' : `${listing.price} ${listing.currency}`}
+                        {!listing.price || listing.price === 0 ? 'ÜCRETSİZ' : listing.type === 'exchange' ? 'TAKAS' : `${listing.price} ${listing.currency}`}
                     </span>
                 </div>
             </div>

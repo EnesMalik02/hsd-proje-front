@@ -47,8 +47,8 @@ export default function Home() {
             {/* Header Section */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">Welcome back, {userName}</h1>
-                    <p className="text-gray-500 mt-1">Here's what's happening with your listings today.</p>
+                    <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">Tekrar hoş geldin, {userName}</h1>
+                    <p className="text-gray-500 mt-1">İlanlarınla ilgili gelişmeleri buradan takip edebilirsin.</p>
                 </div>
             </div>
 
@@ -58,7 +58,7 @@ export default function Home() {
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
                     <input
                         type="text"
-                        placeholder="Search by title, address, or ID..."
+                        placeholder="İlan başlığı, adres veya ID ile ara..."
                         className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all text-sm font-medium"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
@@ -68,14 +68,14 @@ export default function Home() {
                     <button className="flex items-center gap-2 px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm font-medium text-gray-700 hover:bg-gray-100 transition-colors min-w-[140px] justify-between">
                         <div className="flex items-center gap-2">
                             <Filter className="w-4 h-4 text-gray-500" />
-                            {statusFilter}
+                            Tüm Durumlar
                         </div>
                         <ChevronDown className="w-4 h-4 text-gray-400" />
                     </button>
                     <button className="flex items-center gap-2 px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm font-medium text-gray-700 hover:bg-gray-100 transition-colors min-w-[140px] justify-between">
                         <div className="flex items-center gap-2">
                             <ArrowUpDown className="w-4 h-4 text-gray-500" />
-                            Newest First
+                            En Yeniler
                         </div>
                         <ChevronDown className="w-4 h-4 text-gray-400" />
                     </button>
@@ -93,7 +93,7 @@ export default function Home() {
                 </div>
             ) : listings.length === 0 ? (
                 <div className="flex h-64 flex-col items-center justify-center rounded-xl border border-dashed border-gray-300 bg-gray-50">
-                    <p className="text-lg text-gray-500">No suggested listings found.</p>
+                    <p className="text-lg text-gray-500">Önerilen ilan bulunamadı.</p>
                 </div>
             ) : (
                 <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
@@ -101,13 +101,13 @@ export default function Home() {
                         <div key={listing.id} className="relative group">
                             {/* Badges Mockup */}
                             {index % 4 === 0 && (
-                                <div className="absolute top-3 left-3 z-10 bg-red-600 text-white text-[10px] font-bold px-2 py-1 rounded shadow-sm">TRENDING</div>
+                                <div className="absolute top-3 left-3 z-10 bg-red-600 text-white text-[10px] font-bold px-2 py-1 rounded shadow-sm">TREND</div>
                             )}
                             {index % 4 === 1 && (
-                                <div className="absolute top-3 right-3 z-10 bg-white text-gray-900 text-[10px] font-bold px-2 py-1 rounded shadow-sm">NEW</div>
+                                <div className="absolute top-3 right-3 z-10 bg-white text-gray-900 text-[10px] font-bold px-2 py-1 rounded shadow-sm">YENİ</div>
                             )}
                             {index % 4 === 3 && (
-                                <div className="absolute top-3 right-3 z-10 bg-red-500 text-white text-[10px] font-bold px-2 py-1 rounded shadow-sm">HOT</div>
+                                <div className="absolute top-3 right-3 z-10 bg-red-500 text-white text-[10px] font-bold px-2 py-1 rounded shadow-sm">POPÜLER</div>
                             )}
 
                             <ListingCard

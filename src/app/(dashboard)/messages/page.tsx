@@ -133,7 +133,7 @@ export default function MessagesPage() {
 
             } catch (err) {
                 console.error(err);
-                setError("Mesajlar yüklenirken bir hata oluştur.");
+                setError("Mesajlar yüklenirken bir hata oluştu.");
             } finally {
                 setLoading(false);
             }
@@ -207,7 +207,10 @@ export default function MessagesPage() {
                                             item.status === 'accepted' ? 'bg-white border-green-200 text-green-600' :
                                                 'bg-gray-50 border-gray-200 text-gray-400'
                                             }`}>
-                                            {item.status === 'pending' ? 'Bekliyor' : item.status}
+                                            {item.status === 'pending' ? 'Bekliyor' :
+                                                item.status === 'accepted' ? 'Kabul Edildi' :
+                                                    item.status === 'rejected' ? 'Reddedildi' :
+                                                        item.status}
                                         </span>
                                     )}
                                 </div>

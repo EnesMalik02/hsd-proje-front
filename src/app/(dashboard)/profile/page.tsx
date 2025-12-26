@@ -180,18 +180,18 @@ export default function ProfilePage() {
                                     value={formData.display_name}
                                     onChange={(e) => setFormData({ ...formData, display_name: e.target.value })}
                                     className="w-full p-2 border border-gray-300 rounded-lg text-sm"
-                                    placeholder="Name"
+                                    placeholder="Ad Soyad"
                                 />
                                 <textarea
                                     value={formData.bio}
                                     onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
                                     className="w-full p-2 border border-gray-300 rounded-lg text-sm"
                                     rows={3}
-                                    placeholder="Bio"
+                                    placeholder="Biyografi"
                                 />
                                 <div className="flex gap-2">
-                                    <button onClick={handleSave} className="flex-1 bg-red-600 text-white py-2 rounded-lg text-sm font-bold">Save</button>
-                                    <button onClick={() => setIsEditing(false)} className="flex-1 bg-gray-100 text-gray-700 py-2 rounded-lg text-sm font-bold">Cancel</button>
+                                    <button onClick={handleSave} className="flex-1 bg-red-600 text-white py-2 rounded-lg text-sm font-bold">Kaydet</button>
+                                    <button onClick={() => setIsEditing(false)} className="flex-1 bg-gray-100 text-gray-700 py-2 rounded-lg text-sm font-bold">İptal</button>
                                 </div>
                             </div>
                         ) : (
@@ -200,17 +200,17 @@ export default function ProfilePage() {
                                 <p className="text-red-600 font-medium text-sm mb-4">@{displayUser.username || "username"}</p>
 
                                 <p className="text-gray-600 text-sm leading-relaxed mb-6">
-                                    {displayUser.bio || "No bio description."}
+                                    {displayUser.bio || "Biyografi bulunmuyor."}
                                 </p>
 
                                 <div className="w-full space-y-3 mb-6">
                                     <div className="flex items-center gap-3 text-gray-500 text-sm">
                                         <MapPin className="w-4 h-4" />
-                                        {displayUser.location?.city || "Unknown City"}, {displayUser.location?.district || "Country"}
+                                        {displayUser.location?.city || "Bilinmeyen Şehir"}, {displayUser.location?.district || "Türkiye"}
                                     </div>
                                     <div className="flex items-center gap-3 text-gray-500 text-sm">
                                         <Calendar className="w-4 h-4" />
-                                        Joined {displayUser.created_at ? new Date(displayUser.created_at).toLocaleDateString() : "Recently"}
+                                        Katılım {displayUser.created_at ? new Date(displayUser.created_at).toLocaleDateString() : "Yeni"}
                                     </div>
                                 </div>
 
@@ -220,7 +220,7 @@ export default function ProfilePage() {
                                         className="w-full py-2.5 bg-red-600 text-white rounded-xl font-bold text-sm hover:bg-red-700 transition-colors flex items-center justify-center gap-2"
                                     >
                                         <Settings className="w-4 h-4" />
-                                        Edit Profile
+                                        Profili Düzenle
                                     </button>
                                     <button
                                         onClick={handleShare}
@@ -229,12 +229,12 @@ export default function ProfilePage() {
                                         {copied ? (
                                             <>
                                                 <Check className="w-4 h-4 text-green-600" />
-                                                <span className="text-green-600">Copied!</span>
+                                                <span className="text-green-600">Kopyalandı!</span>
                                             </>
                                         ) : (
                                             <>
                                                 <Share2 className="w-4 h-4" />
-                                                Share Profile
+                                                Profili Paylaş
                                             </>
                                         )}
                                     </button>
@@ -249,7 +249,7 @@ export default function ProfilePage() {
                     className="w-full py-2 text-gray-400 hover:text-red-600 text-sm font-medium transition-colors flex items-center justify-center gap-2"
                 >
                     <LogOut className="w-4 h-4" />
-                    Sign Out
+                    Çıkış Yap
                 </button>
             </div>
 
@@ -267,7 +267,7 @@ export default function ProfilePage() {
                                 }`}
                         >
                             <Box className="w-4 h-4" />
-                            My Listings
+                            İlanlarım
                             <span className="bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full text-xs">{listings.length}</span>
                         </button>
                         <button
@@ -276,7 +276,7 @@ export default function ProfilePage() {
                                 }`}
                         >
                             <Heart className="w-4 h-4" />
-                            My Requests
+                            Taleplerim
                         </button>
                     </div>
 
@@ -288,7 +288,7 @@ export default function ProfilePage() {
                         {activeTab === 'requests' && (
                             <div className="text-center py-12 text-gray-400 bg-gray-50 rounded-xl border border-dashed border-gray-200">
                                 <Heart className="w-12 h-12 mx-auto mb-3 opacity-20" />
-                                <p>No requests yet</p>
+                                <p>Henüz talep yok</p>
                             </div>
                         )}
                     </div>
@@ -345,9 +345,9 @@ export default function ProfilePage() {
                                     onChange={e => setEditForm({ ...editForm, status: e.target.value })}
                                     className="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all font-medium"
                                 >
-                                    <option value="active">Active</option>
-                                    <option value="pending">Pending</option>
-                                    <option value="sold">Sold</option>
+                                    <option value="active">Aktif</option>
+                                    <option value="pending">Beklemede</option>
+                                    <option value="sold">Satıldı</option>
                                 </select>
                             </div>
                         </div>
