@@ -7,7 +7,7 @@ import { authApi } from "@/lib/api";
 import { ListingResponse } from "@/lib/types";
 import Navbar from "@/components/Navbar";
 import {
-    Search, Heart, Share2, Printer, MapPin,
+    Search, Heart, Share2, MapPin,
     Bed, Bath, Ruler, Calendar, CheckCircle2,
     Phone, CalendarDays, Hexagon, Loader2,
     Tag, Gift
@@ -239,7 +239,7 @@ export default function ListingDetailPage() {
                             */}
                                 </div>
 
-                                <div className="grid grid-cols-3 gap-2 mt-6 pt-6 border-t border-gray-100">
+                                <div className="grid grid-cols-2 gap-2 mt-6 pt-6 border-t border-gray-100">
                                     <button className="flex flex-col items-center justify-center gap-1 text-gray-400 hover:text-red-600 transition-colors">
                                         <div className="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center shadow-sm">
                                             <Heart className="w-4 h-4" />
@@ -251,12 +251,6 @@ export default function ListingDetailPage() {
                                             <Share2 className="w-4 h-4" />
                                         </div>
                                         <span className="text-[10px] font-medium uppercase">Share</span>
-                                    </button>
-                                    <button className="flex flex-col items-center justify-center gap-1 text-gray-400 hover:text-red-600 transition-colors">
-                                        <div className="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center shadow-sm">
-                                            <Printer className="w-4 h-4" />
-                                        </div>
-                                        <span className="text-[10px] font-medium uppercase">Print</span>
                                     </button>
                                 </div>
                             </div>

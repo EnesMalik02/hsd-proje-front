@@ -10,14 +10,25 @@ import { Loader2, Search, Filter, ArrowUpDown, ChevronDown } from "lucide-react"
 export default function Home() {
     const router = useRouter();
     const [listings, setListings] = useState<ListingResponse[]>([]);
+    const [userName, setUserName] = useState<string>("User");
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [searchTerm, setSearchTerm] = useState("");
     const [statusFilter, setStatusFilter] = useState("All Statuses");
 
     useEffect(() => {
-        const fetchListings = async () => {
+        const fetchData = async () => {
             try {
+                // Fetch user data
+                try {
+                    const user = await authApi.getMe();
+                    if (user && user.display_name) {
+                        setUserName(user.display_name);
+                    }
+                } catch (e) {
+                    console.log("Could not fetch user name");
+                }
+
                 const data = await authApi.getSuggestedListings();
                 setListings(data);
             } catch (err) {
@@ -28,7 +39,7 @@ export default function Home() {
             }
         };
 
-        fetchListings();
+        fetchData();
     }, []);
 
     return (
@@ -36,7 +47,7 @@ export default function Home() {
             {/* Header Section */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">Welcome back, Alex</h1>
+                    <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">Welcome back, {userName}</h1>
                     <p className="text-gray-500 mt-1">Here's what's happening with your listings today.</p>
                 </div>
             </div>

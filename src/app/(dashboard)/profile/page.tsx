@@ -6,7 +6,7 @@ import { authApi } from "@/lib/api";
 import { UserResponse, ListingResponse } from "@/lib/types";
 import {
     User, Settings, LogOut, MapPin, Calendar, Share2,
-    Heart, MessageSquare, Star, Gift, Box, Leaf, X
+    Heart, MessageSquare, Star, Gift, Box, Leaf, X, Check
 } from "lucide-react";
 import MyListings from "@/components/MyListings";
 
@@ -17,12 +17,44 @@ export default function ProfilePage() {
     const [loading, setLoading] = useState(true);
     const [isEditing, setIsEditing] = useState(false);
     const [saving, setSaving] = useState(false);
-    const [activeTab, setActiveTab] = useState<'listings' | 'requests' | 'reviews'>('listings');
+    const [copied, setCopied] = useState(false);
+    const [activeTab, setActiveTab] = useState<'listings' | 'requests'>('listings');
     const [formData, setFormData] = useState({
         display_name: "",
         bio: "",
         photo_url: ""
     });
+
+    // ... existing hook ...
+
+    const handleShare = async () => {
+        // Ideally point to a public profile URL like /u/[username]
+        // For now, we will just use the current URL setup or a mock public URL
+        const shareUrl = window.location.href;
+
+        const shareData = {
+            title: `${user?.display_name || 'User'}'s Profile`,
+            text: `Check out ${user?.display_name || 'User'}'s profile!`,
+            url: shareUrl,
+        };
+
+        if (navigator.share) {
+            try {
+                await navigator.share(shareData);
+            } catch (err) {
+                console.error("Error sharing:", err);
+            }
+        } else {
+            try {
+                await navigator.clipboard.writeText(shareUrl);
+                setCopied(true);
+                setTimeout(() => setCopied(false), 2000);
+            } catch (err) {
+                console.error("Failed to copy:", err);
+            }
+        }
+    };
+
 
     // Edit Listing State
     const [editingListing, setEditingListing] = useState<ListingResponse | null>(null);
@@ -190,9 +222,21 @@ export default function ProfilePage() {
                                         <Settings className="w-4 h-4" />
                                         Edit Profile
                                     </button>
-                                    <button className="w-full py-2.5 bg-white border border-gray-200 text-gray-700 rounded-xl font-bold text-sm hover:bg-gray-50 transition-colors flex items-center justify-center gap-2">
-                                        <Share2 className="w-4 h-4" />
-                                        Share Profile
+                                    <button
+                                        onClick={handleShare}
+                                        className="w-full py-2.5 bg-white border border-gray-200 text-gray-700 rounded-xl font-bold text-sm hover:bg-gray-50 transition-colors flex items-center justify-center gap-2"
+                                    >
+                                        {copied ? (
+                                            <>
+                                                <Check className="w-4 h-4 text-green-600" />
+                                                <span className="text-green-600">Copied!</span>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <Share2 className="w-4 h-4" />
+                                                Share Profile
+                                            </>
+                                        )}
                                     </button>
                                 </div>
                             </>
@@ -234,14 +278,6 @@ export default function ProfilePage() {
                             <Heart className="w-4 h-4" />
                             My Requests
                         </button>
-                        <button
-                            onClick={() => setActiveTab('reviews')}
-                            className={`pb-3 text-sm font-bold transition-all relative flex items-center gap-2 ${activeTab === 'reviews' ? 'text-red-600 border-b-2 border-red-600' : 'text-gray-500 hover:text-gray-700'
-                                }`}
-                        >
-                            <MessageSquare className="w-4 h-4" />
-                            Reviews
-                        </button>
                     </div>
 
                     {/* Tab Panels */}
@@ -253,12 +289,6 @@ export default function ProfilePage() {
                             <div className="text-center py-12 text-gray-400 bg-gray-50 rounded-xl border border-dashed border-gray-200">
                                 <Heart className="w-12 h-12 mx-auto mb-3 opacity-20" />
                                 <p>No requests yet</p>
-                            </div>
-                        )}
-                        {activeTab === 'reviews' && (
-                            <div className="text-center py-12 text-gray-400 bg-gray-50 rounded-xl border border-dashed border-gray-200">
-                                <Star className="w-12 h-12 mx-auto mb-3 opacity-20" />
-                                <p>No reviews yet</p>
                             </div>
                         )}
                     </div>

@@ -1,41 +1,97 @@
 "use client";
 
 import Link from "next/link";
-import { Hexagon, Search, Home, List, MessageSquare, User } from "lucide-react";
+import { useState } from "react";
+import { Hexagon, Search, Home, List, MessageSquare, User, Menu, X } from "lucide-react";
 
 export default function Navbar() {
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
     return (
-        <header className="sticky top-0 z-50 w-full bg-white border-b border-gray-100 px-6 py-4 flex items-center justify-between">
-            <div className="flex items-center gap-8">
-                <Link href="/" className="flex items-center gap-2">
-                    <div className="bg-red-600 p-1.5 rounded-lg">
-                        <Hexagon className="w-5 h-5 text-white fill-current" />
+        <header className="sticky top-0 z-50 w-full bg-white border-b border-gray-100 shadow-sm">
+            <div className="px-6 py-4 flex items-center justify-between">
+                <div className="flex items-center gap-8">
+                    <Link href="/" className="flex items-center gap-2">
+                        <div className="bg-red-600 p-1.5 rounded-lg">
+                            <Hexagon className="w-5 h-5 text-white fill-current" />
+                        </div>
+                        <span className="text-xl font-bold tracking-tight text-gray-900">HSD Proje</span>
+                    </Link>
+                    <div className="hidden md:flex items-center bg-gray-100 rounded-full px-4 py-2 w-64">
+                        <Search className="w-4 h-4 text-gray-400" />
+                        <input
+                            type="text"
+                            placeholder="Search properties..."
+                            className="bg-transparent border-none outline-none text-sm ml-2 w-full placeholder-gray-400"
+                        />
                     </div>
-                    <span className="text-xl font-bold tracking-tight text-gray-900">HSD Proje</span>
-                </Link>
-                <div className="hidden md:flex items-center bg-gray-100 rounded-full px-4 py-2 w-64">
-                    <Search className="w-4 h-4 text-gray-400" />
-                    <input
-                        type="text"
-                        placeholder="Search properties..."
-                        className="bg-transparent border-none outline-none text-sm ml-2 w-full placeholder-gray-400"
-                    />
                 </div>
+
+                {/* Desktop Navigation */}
+                <nav className="hidden md:flex items-center gap-6 text-sm font-bold text-gray-700">
+                    <Link href="/" className="flex items-center gap-2 hover:text-red-600 transition-colors">
+                        <Home className="w-4 h-4" />
+                        Ana Sayfa
+                    </Link>
+                    <Link href="/messages" className="flex items-center gap-2 hover:text-red-600 transition-colors">
+                        <MessageSquare className="w-4 h-4" />
+                        Mesajlarım
+                    </Link>
+                    <Link href="/profile" className="flex items-center gap-2 hover:text-red-600 transition-colors">
+                        <User className="w-4 h-4" />
+                        Profilim
+                    </Link>
+                </nav>
+
+                {/* Mobile Menu Button */}
+                <button
+                    onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                    className="md:hidden p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+                >
+                    {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+                </button>
             </div>
-            <nav className="hidden md:flex items-center gap-6 text-sm font-bold text-gray-700">
-                <Link href="/" className="flex items-center gap-2 hover:text-red-600 transition-colors">
-                    <Home className="w-4 h-4" />
-                    Ana Sayfa
-                </Link>
-                <Link href="/messages" className="flex items-center gap-2 hover:text-red-600 transition-colors">
-                    <MessageSquare className="w-4 h-4" />
-                    Mesajlarım
-                </Link>
-                <Link href="/profile" className="flex items-center gap-2 hover:text-red-600 transition-colors">
-                    <User className="w-4 h-4" />
-                    Profilim
-                </Link>
-            </nav>
+
+            {/* Mobile Navigation Menu */}
+            {isMobileMenuOpen && (
+                <div className="md:hidden border-t border-gray-100 bg-white px-6 py-4 animate-in slide-in-from-top-2">
+                    <div className="flex items-center bg-gray-100 rounded-lg px-4 py-2 mb-4">
+                        <Search className="w-4 h-4 text-gray-400" />
+                        <input
+                            type="text"
+                            placeholder="Search..."
+                            className="bg-transparent border-none outline-none text-sm ml-2 w-full"
+                        />
+                    </div>
+
+                    <nav className="flex flex-col gap-4">
+                        <Link
+                            href="/"
+                            onClick={() => setIsMobileMenuOpen(false)}
+                            className="flex items-center gap-3 text-sm font-bold text-gray-700 hover:text-red-600 p-2 hover:bg-red-50 rounded-lg transition-colors"
+                        >
+                            <Home className="w-5 h-5" />
+                            Ana Sayfa
+                        </Link>
+                        <Link
+                            href="/messages"
+                            onClick={() => setIsMobileMenuOpen(false)}
+                            className="flex items-center gap-3 text-sm font-bold text-gray-700 hover:text-red-600 p-2 hover:bg-red-50 rounded-lg transition-colors"
+                        >
+                            <MessageSquare className="w-5 h-5" />
+                            Mesajlarım
+                        </Link>
+                        <Link
+                            href="/profile"
+                            onClick={() => setIsMobileMenuOpen(false)}
+                            className="flex items-center gap-3 text-sm font-bold text-gray-700 hover:text-red-600 p-2 hover:bg-red-50 rounded-lg transition-colors"
+                        >
+                            <User className="w-5 h-5" />
+                            Profilim
+                        </Link>
+                    </nav>
+                </div>
+            )}
         </header>
     );
 }

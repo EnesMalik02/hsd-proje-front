@@ -59,9 +59,9 @@ export function ListingCard({ listing, onClick }: ListingCardProps) {
 
                     <div className="text-sm font-bold">
                         {listing.price === 0 || listing.type === 'donation' ? (
-                            <span className="text-green-600 px-2 py-0.5 bg-green-50 rounded-md">BAĞIŞ</span>
+                            <span className="text-green-600 px-3 py-1 bg-green-50 rounded-lg">BAĞIŞ</span>
                         ) : (
-                            <span className="text-red-600">{listing.price} {listing.currency}</span>
+                            <span className="text-gray-900 px-3 py-1 bg-gray-100 rounded-lg">{listing.price} {listing.currency}</span>
                         )}
                     </div>
                 </div>
