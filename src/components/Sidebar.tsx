@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, PlusCircle, User, LogOut, Package } from "lucide-react";
+import { Home, PlusCircle, User, LogOut, Package, MessageCircle } from "lucide-react";
 import { authApi } from "@/lib/api";
 import { useRouter } from "next/navigation";
 
@@ -13,6 +13,7 @@ export default function Sidebar() {
     const menuItems = [
         { name: "Anasayfa", href: "/", icon: Home },
         { name: "Satış Oluştur", href: "/listings/create", icon: PlusCircle },
+        { name: "Mesajlarım", href: "/messages", icon: MessageCircle },
         { name: "Profil", href: "/profile", icon: User },
     ];
 
@@ -44,14 +45,14 @@ export default function Sidebar() {
                                 <Link
                                     href={item.href}
                                     className={`group flex items-center rounded-lg p-2 text-gray-900 transition-all hover:bg-gray-100 dark:text-white dark:hover:bg-gray-800 ${isActive
-                                            ? "bg-purple-50 text-purple-600 dark:bg-purple-900/20 dark:text-purple-400"
-                                            : ""
+                                        ? "bg-purple-50 text-purple-600 dark:bg-purple-900/20 dark:text-purple-400"
+                                        : ""
                                         }`}
                                 >
                                     <Icon
                                         className={`h-5 w-5 transition duration-75 ${isActive
-                                                ? "text-purple-600 dark:text-purple-400"
-                                                : "text-gray-500 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white"
+                                            ? "text-purple-600 dark:text-purple-400"
+                                            : "text-gray-500 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white"
                                             }`}
                                     />
                                     <span className="ml-3">{item.name}</span>
