@@ -85,7 +85,7 @@ export default function ProfilePage() {
 
     return (
         <div className="max-w-5xl mx-auto py-8 px-4">
-            <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-800 overflow-hidden mb-8">
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden mb-8">
                 {/* Banner/Header */}
                 <div className="h-40 bg-gradient-to-r from-red-600 to-red-400"></div>
 
@@ -96,10 +96,10 @@ export default function ProfilePage() {
                                 <img
                                     src={displayUser.photo_url}
                                     alt={displayUser.display_name}
-                                    className="w-32 h-32 rounded-full border-4 border-white dark:border-gray-900 object-cover bg-white shadow-md"
+                                    className="w-32 h-32 rounded-full border-4 border-white object-cover bg-white shadow-md"
                                 />
                             ) : (
-                                <div className="w-32 h-32 rounded-full border-4 border-white dark:border-gray-900 bg-gray-100 dark:bg-gray-800 flex items-center justify-center shadow-md">
+                                <div className="w-32 h-32 rounded-full border-4 border-white bg-gray-100 flex items-center justify-center shadow-md">
                                     <User className="w-12 h-12 text-gray-300" />
                                 </div>
                             )}
@@ -109,7 +109,7 @@ export default function ProfilePage() {
                             <div className="flex items-center gap-3 mb-2">
                                 <button
                                     onClick={() => setIsEditing(true)}
-                                    className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-sm font-bold hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors shadow-sm"
+                                    className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-xl text-sm font-bold text-gray-700 hover:bg-gray-50 transition-colors shadow-sm"
                                 >
                                     <Settings className="w-4 h-4" />
                                     Profili Düzenle
@@ -130,30 +130,30 @@ export default function ProfilePage() {
                             {/* ... Editing Form Fields ... */}
                             <div className="space-y-4">
                                 <div className="space-y-2">
-                                    <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Ad Soyad</label>
+                                    <label className="text-sm font-medium text-gray-700">Ad Soyad</label>
                                     <input
                                         type="text"
                                         value={formData.display_name}
                                         onChange={(e) => setFormData({ ...formData, display_name: e.target.value })}
-                                        className="flex h-10 w-full rounded-md border border-gray-300 dark:border-gray-700 bg-transparent px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-500"
+                                        className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-red-500 placeholder:text-gray-400"
                                     />
                                 </div>
                                 <div className="space-y-2">
-                                    <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Biyografi</label>
+                                    <label className="text-sm font-medium text-gray-700">Biyografi</label>
                                     <textarea
                                         value={formData.bio}
                                         onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
-                                        className="flex w-full rounded-md border border-gray-300 dark:border-gray-700 bg-transparent px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-500"
+                                        className="flex w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-red-500 placeholder:text-gray-400"
                                         rows={3}
                                     />
                                 </div>
                                 <div className="space-y-2">
-                                    <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Profil Fotoğrafı URL</label>
+                                    <label className="text-sm font-medium text-gray-700">Profil Fotoğrafı URL</label>
                                     <input
                                         type="url"
                                         value={formData.photo_url}
                                         onChange={(e) => setFormData({ ...formData, photo_url: e.target.value })}
-                                        className="flex h-10 w-full rounded-md border border-gray-300 dark:border-gray-700 bg-transparent px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-500"
+                                        className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-red-500 placeholder:text-gray-400"
                                     />
                                 </div>
                             </div>
@@ -161,7 +161,7 @@ export default function ProfilePage() {
                             <div className="flex justify-end gap-2 pt-2">
                                 <button
                                     onClick={() => setIsEditing(false)}
-                                    className="px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg text-sm font-medium transition-colors"
+                                    className="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg text-sm font-medium transition-colors"
                                 >
                                     İptal
                                 </button>
@@ -177,12 +177,12 @@ export default function ProfilePage() {
                     ) : (
                         <div>
                             <div className="mb-8">
-                                <h1 className="text-3xl font-extrabold text-gray-900 dark:text-white">{displayUser.display_name}</h1>
-                                <p className="text-gray-500 dark:text-gray-400">{displayUser.email}</p>
+                                <h1 className="text-3xl font-extrabold text-gray-900">{displayUser.display_name}</h1>
+                                <p className="text-gray-500">{displayUser.email}</p>
                             </div>
 
                             {/* Tabs */}
-                            <div className="flex items-center gap-8 border-b border-gray-200 dark:border-gray-800 mb-8">
+                            <div className="flex items-center gap-8 border-b border-gray-200 mb-8">
                                 <button
                                     onClick={() => setActiveTab('profile')}
                                     className={`flex items-center gap-2 pb-3 text-sm font-bold transition-all relative ${activeTab === 'profile'
@@ -213,24 +213,24 @@ export default function ProfilePage() {
                                     {displayUser.bio && (
                                         <div className="mb-8">
                                             <h3 className="text-lg font-bold text-gray-900 mb-2">Hakkında</h3>
-                                            <div className="p-6 bg-gray-50 dark:bg-gray-800/50 rounded-2xl border border-gray-100">
-                                                <p className="text-gray-700 dark:text-gray-300 leading-relaxed">{displayUser.bio}</p>
+                                            <div className="p-6 bg-gray-50 rounded-2xl border border-gray-100">
+                                                <p className="text-gray-700 leading-relaxed">{displayUser.bio}</p>
                                             </div>
                                         </div>
                                     )}
 
-                                    <div className="grid grid-cols-3 gap-6">
-                                        <div className="flex flex-col items-center justify-center p-6 bg-purple-50 rounded-2xl border border-purple-100">
+                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                        <div className="flex flex-col items-center justify-center p-6 bg-white border border-gray-100 rounded-xl shadow-sm">
                                             <div className="text-3xl font-extrabold text-purple-600 mb-1">{displayUser.stats?.items_donated || 0}</div>
-                                            <div className="text-xs font-bold text-purple-400 uppercase tracking-widest">Bağışlanan</div>
+                                            <div className="text-[10px] font-bold text-purple-400 uppercase tracking-widest">Bağışlanan</div>
                                         </div>
-                                        <div className="flex flex-col items-center justify-center p-6 bg-pink-50 rounded-2xl border border-pink-100">
+                                        <div className="flex flex-col items-center justify-center p-6 bg-white border border-gray-100 rounded-xl shadow-sm">
                                             <div className="text-3xl font-extrabold text-pink-600 mb-1">{displayUser.stats?.items_received || 0}</div>
-                                            <div className="text-xs font-bold text-pink-400 uppercase tracking-widest">Alınan</div>
+                                            <div className="text-[10px] font-bold text-pink-400 uppercase tracking-widest">Alınan</div>
                                         </div>
-                                        <div className="flex flex-col items-center justify-center p-6 bg-green-50 rounded-2xl border border-green-100">
+                                        <div className="flex flex-col items-center justify-center p-6 bg-white border border-gray-100 rounded-xl shadow-sm">
                                             <div className="text-3xl font-extrabold text-green-600 mb-1">{displayUser.stats?.carbon_saved || 0}</div>
-                                            <div className="text-xs font-bold text-green-400 uppercase tracking-widest">Karbon Tasarrufu</div>
+                                            <div className="text-[10px] font-bold text-green-400 uppercase tracking-widest">Karbon Tasarrufu</div>
                                         </div>
                                     </div>
                                 </div>

@@ -5,13 +5,15 @@ import { useRouter } from "next/navigation";
 import { authApi } from "@/lib/api";
 import { ListingResponse } from "@/lib/types";
 import { ListingCard } from "@/components/ListingCard";
-import { Loader2 } from "lucide-react";
+import { Loader2, Search, Filter, ArrowUpDown, ChevronDown } from "lucide-react";
 
 export default function Home() {
     const router = useRouter();
     const [listings, setListings] = useState<ListingResponse[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [searchTerm, setSearchTerm] = useState("");
+    const [statusFilter, setStatusFilter] = useState("All Statuses");
 
     useEffect(() => {
         const fetchListings = async () => {
@@ -39,14 +41,33 @@ export default function Home() {
                 </div>
             </div>
 
-            {/* Suggested Listings Header & Filters */}
-            <div className="flex items-center justify-between">
-                <h2 className="text-xl font-bold text-gray-900">Suggested Listings</h2>
-                <div className="flex gap-2">
-                    <button className="px-4 py-1.5 bg-red-600 text-white text-sm font-semibold rounded-full shadow-sm hover:bg-red-700 transition-colors">All</button>
-                    <button className="px-4 py-1.5 bg-white border border-gray-200 text-gray-600 text-sm font-semibold rounded-full hover:bg-gray-50 transition-colors">Trending</button>
-                    <button className="px-4 py-1.5 bg-white border border-gray-200 text-gray-600 text-sm font-semibold rounded-full hover:bg-gray-50 transition-colors">New Arrivals</button>
-                    <button className="px-4 py-1.5 bg-white border border-gray-200 text-gray-600 text-sm font-semibold rounded-full hover:bg-gray-50 transition-colors">Best Value</button>
+            {/* Filter Bar */}
+            <div className="bg-white p-4 rounded-2xl border border-gray-200 shadow-sm flex flex-col md:flex-row gap-4">
+                <div className="flex-1 relative">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+                    <input
+                        type="text"
+                        placeholder="Search by title, address, or ID..."
+                        className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all text-sm font-medium"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                    />
+                </div>
+                <div className="flex gap-4">
+                    <button className="flex items-center gap-2 px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm font-medium text-gray-700 hover:bg-gray-100 transition-colors min-w-[140px] justify-between">
+                        <div className="flex items-center gap-2">
+                            <Filter className="w-4 h-4 text-gray-500" />
+                            {statusFilter}
+                        </div>
+                        <ChevronDown className="w-4 h-4 text-gray-400" />
+                    </button>
+                    <button className="flex items-center gap-2 px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm font-medium text-gray-700 hover:bg-gray-100 transition-colors min-w-[140px] justify-between">
+                        <div className="flex items-center gap-2">
+                            <ArrowUpDown className="w-4 h-4 text-gray-500" />
+                            Newest First
+                        </div>
+                        <ChevronDown className="w-4 h-4 text-gray-400" />
+                    </button>
                 </div>
             </div>
 

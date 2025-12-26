@@ -27,10 +27,6 @@ export default function Navbar() {
                     <Home className="w-4 h-4" />
                     Ana Sayfa
                 </Link>
-                <Link href="#" className="flex items-center gap-2 hover:text-red-600 transition-colors">
-                    <List className="w-4 h-4" />
-                    Listelemelerim
-                </Link>
                 <Link href="/messages" className="flex items-center gap-2 hover:text-red-600 transition-colors">
                     <MessageSquare className="w-4 h-4" />
                     Mesajlarım
