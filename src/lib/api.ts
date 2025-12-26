@@ -109,6 +109,12 @@ export const authApi = {
         return request<ListingResponse[]>("/listings/suggested", {
             method: "GET",
         });
+    },
+
+    getListing: async (id: string): Promise<ListingResponse> => {
+        return request<ListingResponse>(`/listings/${id}`, {
+            method: "GET",
+        });
     }
 };
 

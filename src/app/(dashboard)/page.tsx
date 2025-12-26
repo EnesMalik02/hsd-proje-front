@@ -1,12 +1,14 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { authApi } from "@/lib/api";
 import { ListingResponse } from "@/lib/types";
 import { ListingCard } from "@/components/ListingCard";
 import { Loader2 } from "lucide-react";
 
 export default function Home() {
+    const router = useRouter();
     const [listings, setListings] = useState<ListingResponse[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -80,7 +82,7 @@ export default function Home() {
                                 <ListingCard
                                     key={listing.id}
                                     listing={listing}
-                                    onClick={() => console.log("Clicked listing:", listing.id)}
+                                    onClick={() => router.push(`/listings/${listing.id}`)}
                                 />
                             ))}
                         </div>
