@@ -85,22 +85,22 @@ export default function ListingDetailPage() {
                             />
                         </div>
                     ) : (
-                        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 h-[500px]">
-                            <div className="md:col-span-3 h-full relative group">
+                        <div className="flex flex-col gap-4">
+                            <div className="w-full h-[400px] md:h-[500px] relative group overflow-hidden rounded-2xl">
                                 <img
                                     src={images[activeImage]}
                                     alt="Main"
-                                    className="w-full h-full object-cover rounded-2xl"
+                                    className="w-full h-full object-cover"
                                 />
                                 <div className="absolute bottom-4 right-4 bg-white/90 backdrop-blur px-3 py-1 rounded-lg text-xs font-bold text-gray-900">
                                     {activeImage + 1} / {images.length} Photos
                                 </div>
                             </div>
-                            <div className="hidden md:flex flex-col gap-4 h-full overflow-y-auto">
+                            <div className="flex gap-4 overflow-x-auto pb-2 pl-1">
                                 {images.map((img, idx) => (
                                     <div
                                         key={idx}
-                                        className={`relative h-1/3 cursor-pointer rounded-2xl overflow-hidden ${activeImage === idx ? 'ring-2 ring-red-600' : ''}`}
+                                        className={`relative h-24 w-32 flex-shrink-0 cursor-pointer rounded-xl overflow-hidden ${activeImage === idx ? 'ring-2 ring-red-600' : 'opacity-70 hover:opacity-100'}`}
                                         onClick={() => setActiveImage(idx)}
                                     >
                                         <img src={img} alt={`Gallery ${idx}`} className="w-full h-full object-cover" />
