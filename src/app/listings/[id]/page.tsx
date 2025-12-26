@@ -69,20 +69,6 @@ export default function ListingDetailPage() {
                         <Link href="#" className="hover:text-red-600 transition-colors">Contact</Link>
                     </nav>
                 </div>
-
-                <div className="flex items-center gap-4">
-                    <div className="hidden md:flex items-center bg-gray-100 rounded-full px-4 py-2 w-64">
-                        <Search className="w-4 h-4 text-gray-400" />
-                        <input
-                            type="text"
-                            placeholder="Search properties..."
-                            className="bg-transparent border-none outline-none text-sm ml-2 w-full placeholder-gray-400"
-                        />
-                    </div>
-                    <button className="bg-red-600 text-white px-6 py-2 rounded-lg text-sm font-semibold hover:bg-red-700 transition-colors">
-                        Login
-                    </button>
-                </div>
             </header>
 
             {/* Breadcrumbs */}
@@ -98,40 +84,40 @@ export default function ListingDetailPage() {
 
             <main className="max-w-7xl mx-auto px-6 pb-20">
                 {/* Gallery */}
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-10 h-[500px]">
-                    <div className="md:col-span-3 h-full relative group">
-                        <img
-                            src={images[activeImage]}
-                            alt="Main"
-                            className="w-full h-full object-cover rounded-2xl"
-                        />
-                        <div className="absolute bottom-4 right-4 bg-white/90 backdrop-blur px-3 py-1 rounded-lg text-xs font-bold text-gray-900">
-                            {activeImage + 1} / {images.length} Photos
+                <div className="mb-10">
+                    {images.length === 1 ? (
+                        <div className="w-full h-[400px] md:h-[500px] relative group overflow-hidden rounded-2xl">
+                            <img
+                                src={images[0]}
+                                alt="Main"
+                                className="w-full h-full object-cover"
+                            />
                         </div>
-                    </div>
-                    <div className="hidden md:grid grid-rows-2 gap-4 h-full">
-                        {images.slice(1, 3).map((img, idx) => (
-                            <div key={idx} className="relative h-full cursor-pointer" onClick={() => setActiveImage(idx + 1)}>
-                                <img src={img} alt={`Gallery ${idx}`} className="w-full h-full object-cover rounded-2xl" />
+                    ) : (
+                        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 h-[500px]">
+                            <div className="md:col-span-3 h-full relative group">
+                                <img
+                                    src={images[activeImage]}
+                                    alt="Main"
+                                    className="w-full h-full object-cover rounded-2xl"
+                                />
+                                <div className="absolute bottom-4 right-4 bg-white/90 backdrop-blur px-3 py-1 rounded-lg text-xs font-bold text-gray-900">
+                                    {activeImage + 1} / {images.length} Photos
+                                </div>
                             </div>
-                        ))}
-                        {images.length > 3 && (
-                            <div className="relative h-full cursor-pointer group" onClick={() => setActiveImage(3)}>
-                                <img src={images[3]} alt="Gallery 3" className="w-full h-full object-cover rounded-2xl" />
-                                {images.length > 4 && (
-                                    <div className="absolute inset-0 bg-black/40 rounded-2xl flex items-center justify-center text-white font-bold text-lg group-hover:bg-black/50 transition-colors">
-                                        +{images.length - 4}
+                            <div className="hidden md:flex flex-col gap-4 h-full overflow-y-auto">
+                                {images.map((img, idx) => (
+                                    <div
+                                        key={idx}
+                                        className={`relative h-1/3 cursor-pointer rounded-2xl overflow-hidden ${activeImage === idx ? 'ring-2 ring-red-600' : ''}`}
+                                        onClick={() => setActiveImage(idx)}
+                                    >
+                                        <img src={img} alt={`Gallery ${idx}`} className="w-full h-full object-cover" />
                                     </div>
-                                )}
+                                ))}
                             </div>
-                        )}
-                        {images.length < 2 && (
-                            <>
-                                <div className="h-full bg-gray-100 rounded-2xl flex items-center justify-center text-gray-400 text-sm">No Image</div>
-                                <div className="h-full bg-gray-100 rounded-2xl flex items-center justify-center text-gray-400 text-sm">No Image</div>
-                            </>
-                        )}
-                    </div>
+                        </div>
+                    )}
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
@@ -150,7 +136,7 @@ export default function ListingDetailPage() {
                                     Listed {new Date(listing.created_at || Date.now()).toLocaleDateString()}
                                 </div>
                             </div>
-                            <h1 className="text-4xl font-extrabold text-gray-900 mb-2 leading-tight">
+                            <h1 className="text-4xl font-extrabold text-gray-900 mb-2 leading-tight break-words">
                                 {listing.title}
                             </h1>
                             <div className="flex items-center text-gray-500 font-medium">
@@ -196,13 +182,16 @@ export default function ListingDetailPage() {
                         <div>
                             <h2 className="text-xl font-bold text-gray-900 mb-6">Location</h2>
                             <div className="w-full h-80 bg-gray-100 rounded-2xl relative overflow-hidden flex items-center justify-center">
-                                <div className="absolute inset-0 bg-gray-200 animate-pulse"></div>
-                                <div className="absolute inset-0 flex items-center justify-center z-10">
-                                    <button className="bg-white px-4 py-2 rounded-lg shadow-lg text-sm font-bold text-gray-900 flex items-center gap-2">
-                                        <MapPin className="w-4 h-4 text-red-600" />
-                                        View on Google Maps
-                                    </button>
-                                </div>
+                                <iframe
+                                    width="100%"
+                                    height="100%"
+                                    style={{ border: 0 }}
+                                    loading="lazy"
+                                    allowFullScreen
+                                    referrerPolicy="no-referrer-when-downgrade"
+                                    src={`https://www.google.com/maps?q=${listing.location.lat},${listing.location.lng}&z=15&output=embed`}
+                                >
+                                </iframe>
                             </div>
                         </div>
 
