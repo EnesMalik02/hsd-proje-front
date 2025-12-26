@@ -17,6 +17,7 @@ export interface ListingCreate {
     currency: string;
     location: Location;
     status: string;
+    phone_number?: string;
 }
 
 export interface ListingResponse {
@@ -35,6 +36,7 @@ export interface ListingResponse {
     owner_avatar?: string | null;
     created_at?: string | null;
     updated_at?: string | null;
+    phone_number?: string;
 }
 
 export interface UserUpdate {
