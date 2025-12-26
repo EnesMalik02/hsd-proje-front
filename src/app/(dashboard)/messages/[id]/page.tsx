@@ -152,11 +152,11 @@ export default function ChatDetailPage() {
                     className={`flex items-center gap-3 ${chatMeta?.listing_id ? 'cursor-pointer hover:bg-gray-50 p-2 -ml-2 rounded-xl transition-colors' : ''}`}
                 >
                     {chatMeta?.listing_image ? (
-                        <div className="w-12 h-12 rounded-lg bg-gray-100 overflow-hidden border border-gray-200">
+                        <div className="w-20 h-20 rounded-lg bg-gray-100 overflow-hidden border border-gray-200 shadow-sm transition-all group-hover:shadow-md">
                             <img src={chatMeta.listing_image} alt="Product" className="w-full h-full object-cover" />
                         </div>
                     ) : (
-                        <div className="w-12 h-12 rounded-lg bg-gray-100 flex items-center justify-center text-gray-400">
+                        <div className="w-20 h-20 rounded-lg bg-gray-100 flex items-center justify-center text-gray-400">
                             <span className="text-xs">No Img</span>
                         </div>
                     )}
