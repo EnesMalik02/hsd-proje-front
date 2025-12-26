@@ -6,6 +6,12 @@ import { ListingCreate, Province, ProvinceApiResponse, District } from "@/lib/ty
 import { compressImage } from "@/lib/imageUtils";
 import { Loader2, X, Plus } from "lucide-react";
 import { useState, useEffect } from "react";
+import dynamic from "next/dynamic";
+
+const LocationPicker = dynamic(() => import("@/components/LocationPicker"), {
+    ssr: false,
+    loading: () => <div className="h-[300px] w-full bg-gray-100 animate-pulse rounded-lg" />
+});
 
 export default function CreateListingPage() {
     const router = useRouter();
@@ -276,41 +282,58 @@ export default function CreateListingPage() {
                 </div>
 
                 {/* Location Selection */}
-                <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                        <label className="text-sm font-medium text-gray-900 dark:text-gray-200">Şehir</label>
-                        <select
-                            required
-                            className="flex h-10 w-full rounded-md border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
-                            value={formData.location.city}
-                            onChange={handleCityChange}
-                            disabled={loadingLocation}
-                        >
-                            <option value="">Seçiniz</option>
-                            {provinces.map((province) => (
-                                <option key={province.id} value={province.name}>
-                                    {province.name}
-                                </option>
-                            ))}
-                        </select>
-                        {loadingLocation && <span className="text-xs text-gray-400">Yükleniyor...</span>}
+                <div className="space-y-4">
+                    <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                            <label className="text-sm font-medium text-gray-900 dark:text-gray-200">Şehir</label>
+                            <select
+                                required
+                                className="flex h-10 w-full rounded-md border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
+                                value={formData.location.city}
+                                onChange={handleCityChange}
+                                disabled={loadingLocation}
+                            >
+                                <option value="">Seçiniz</option>
+                                {provinces.map((province) => (
+                                    <option key={province.id} value={province.name}>
+                                        {province.name}
+                                    </option>
+                                ))}
+                            </select>
+                            {loadingLocation && <span className="text-xs text-gray-400">Yükleniyor...</span>}
+                        </div>
+                        <div className="space-y-2">
+                            <label className="text-sm font-medium text-gray-900 dark:text-gray-200">İlçe</label>
+                            <select
+                                required
+                                className="flex h-10 w-full rounded-md border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
+                                value={formData.location.district}
+                                onChange={(e) => setFormData({ ...formData, location: { ...formData.location, district: e.target.value } })}
+                                disabled={!formData.location.city}
+                            >
+                                <option value="">Seçiniz</option>
+                                {availableDistricts.map((district) => (
+                                    <option key={district.id} value={district.name}>
+                                        {district.name}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
                     </div>
+
                     <div className="space-y-2">
-                        <label className="text-sm font-medium text-gray-900 dark:text-gray-200">İlçe</label>
-                        <select
-                            required
-                            className="flex h-10 w-full rounded-md border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
-                            value={formData.location.district}
-                            onChange={(e) => setFormData({ ...formData, location: { ...formData.location, district: e.target.value } })}
-                            disabled={!formData.location.city}
-                        >
-                            <option value="">Seçiniz</option>
-                            {availableDistricts.map((district) => (
-                                <option key={district.id} value={district.name}>
-                                    {district.name}
-                                </option>
-                            ))}
-                        </select>
+                        <label className="text-sm font-medium text-gray-900 dark:text-gray-200">
+                            Konum Seçimi <span className="text-xs font-normal text-gray-500">(Haritadan işaretleyin)</span>
+                        </label>
+                        <LocationPicker
+                            lat={formData.location.lat}
+                            lng={formData.location.lng}
+                            onLocationSelect={(lat: number, lng: number) => setFormData({ ...formData, location: { ...formData.location, lat, lng } })}
+                        />
+                        <div className="flex gap-4 text-xs text-gray-500">
+                            <span>Enlem: {formData.location.lat.toFixed(6)}</span>
+                            <span>Boylam: {formData.location.lng.toFixed(6)}</span>
+                        </div>
                     </div>
                 </div>
 
