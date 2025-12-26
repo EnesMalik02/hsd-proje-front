@@ -228,31 +228,33 @@ export default function CreateListingPage() {
                     />
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                        <label className="text-sm font-medium text-gray-900 dark:text-gray-200">Fiyat</label>
-                        <input
-                            type="number"
-                            min="0"
-                            required
-                            className="flex h-10 w-full rounded-md border border-gray-300 dark:border-gray-700 bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
-                            value={formData.price}
-                            onChange={(e) => setFormData({ ...formData, price: Number(e.target.value) })}
-                        />
+                {formData.type !== "donation" && (
+                    <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                            <label className="text-sm font-medium text-gray-900 dark:text-gray-200">Fiyat</label>
+                            <input
+                                type="number"
+                                min="0"
+                                required
+                                className="flex h-10 w-full rounded-md border border-gray-300 dark:border-gray-700 bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                                value={formData.price}
+                                onChange={(e) => setFormData({ ...formData, price: Number(e.target.value) })}
+                            />
+                        </div>
+                        <div className="space-y-2">
+                            <label className="text-sm font-medium text-gray-900 dark:text-gray-200">Para Birimi</label>
+                            <select
+                                className="flex h-10 w-full rounded-md border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
+                                value={formData.currency}
+                                onChange={(e) => setFormData({ ...formData, currency: e.target.value })}
+                            >
+                                <option value="TRY">TRY</option>
+                                <option value="USD">USD</option>
+                                <option value="EUR">EUR</option>
+                            </select>
+                        </div>
                     </div>
-                    <div className="space-y-2">
-                        <label className="text-sm font-medium text-gray-900 dark:text-gray-200">Para Birimi</label>
-                        <select
-                            className="flex h-10 w-full rounded-md border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
-                            value={formData.currency}
-                            onChange={(e) => setFormData({ ...formData, currency: e.target.value })}
-                        >
-                            <option value="TRY">TRY</option>
-                            <option value="USD">USD</option>
-                            <option value="EUR">EUR</option>
-                        </select>
-                    </div>
-                </div>
+                )}
 
                 <div className="space-y-2">
                     <label className="text-sm font-medium text-gray-900 dark:text-gray-200">Telefon Numarası (İsteğe Bağlı)</label>
@@ -284,7 +286,14 @@ export default function CreateListingPage() {
                         <select
                             className="flex h-10 w-full rounded-md border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
                             value={formData.type}
-                            onChange={(e) => setFormData({ ...formData, type: e.target.value })}
+                            onChange={(e) => {
+                                const newType = e.target.value;
+                                setFormData({
+                                    ...formData,
+                                    type: newType,
+                                    price: newType === "donation" ? 0 : formData.price
+                                });
+                            }}
                         >
                             <option value="sale">Satılık</option>
                             <option value="donation">Bağış</option>
