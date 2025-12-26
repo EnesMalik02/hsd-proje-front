@@ -3,76 +3,114 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { authApi } from "@/lib/api";
-import { UserResponse } from "@/lib/types";
-import { User, LogOut, LayoutGrid, Settings } from "lucide-react";
+import { UserResponse, ListingResponse } from "@/lib/types";
+import {
+    User, Settings, LogOut, MapPin, Calendar, Share2,
+    Heart, MessageSquare, Star, Gift, Box, Leaf, X
+} from "lucide-react";
 import MyListings from "@/components/MyListings";
 
 export default function ProfilePage() {
     const router = useRouter();
     const [user, setUser] = useState<UserResponse | null>(null);
+    const [listings, setListings] = useState<ListingResponse[]>([]);
     const [loading, setLoading] = useState(true);
-    const [saving, setSaving] = useState(false);
-    const [error, setError] = useState<string | null>(null);
-    const [activeTab, setActiveTab] = useState<'profile' | 'listings'>('profile');
-
-    // Edit Mode state
     const [isEditing, setIsEditing] = useState(false);
+    const [saving, setSaving] = useState(false);
+    const [activeTab, setActiveTab] = useState<'listings' | 'requests' | 'reviews'>('listings');
     const [formData, setFormData] = useState({
         display_name: "",
         bio: "",
         photo_url: ""
     });
 
-    useEffect(() => {
-        fetchUser();
-    }, []);
+    // Edit Listing State
+    const [editingListing, setEditingListing] = useState<ListingResponse | null>(null);
+    const [editForm, setEditForm] = useState({ title: "", price: 0, currency: "TRY", status: "active" });
 
-    const fetchUser = async () => {
-        try {
-            const data = await authApi.getMe();
-            setUser(data);
-            setFormData({
-                display_name: data.display_name || "",
-                bio: data.bio || "",
-                photo_url: data.photo_url || ""
-            });
-        } catch (err) {
-            console.error(err);
-            // Don't block UI on error, allow logout
-            setLoading(false);
-            // setError("Kullanıcı bilgileri alınamadı."); 
-        } finally {
-            setLoading(false);
-        }
-    };
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const userData = await authApi.getMe();
+                setUser(userData);
+                setFormData({
+                    display_name: userData.display_name || "",
+                    bio: userData.bio || "",
+                    photo_url: userData.photo_url || ""
+                });
+
+                // Fetch user listings
+                const userListings = await authApi.getMyListings();
+                setListings(userListings);
+            } catch (err) {
+                console.error(err);
+                // Setup mock user for demo if failed
+                if (!user) {
+                    setUser({
+                        display_name: "Jane Doe",
+                        email: "jane@example.com",
+                        username: "janed_eco",
+                        uid: "mock",
+                        photo_url: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-4.0.3&auto=format&fit=crop&w=256&q=80",
+                        bio: "Passionate about circular economy and reducing waste. Avid recycler and vintage collector based in Berlin.",
+                        location: { city: "Berlin", district: "Germany", lat: 0, lng: 0 },
+                        created_at: "2023-03-01T00:00:00Z",
+                        stats: { items_donated: 14, items_received: 8, carbon_saved: 125 }
+                    });
+                }
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchData();
+    }, []);
 
     const handleSave = async () => {
         setSaving(true);
         try {
-            // Only send updated fields
-            const updatedUser = await authApi.updateMe({
-                display_name: formData.display_name,
-                bio: formData.bio,
-                photo_url: formData.photo_url
-            });
-            setUser(updatedUser);
+            await authApi.updateMe(formData);
+            setUser(prev => prev ? { ...prev, ...formData } : null);
             setIsEditing(false);
         } catch (err) {
             console.error(err);
-            setError("Profil güncellenemedi.");
+            alert("Profil güncellenemedi");
         } finally {
             setSaving(false);
         }
-    }
+    };
 
-    const handleLogout = () => {
+    const handleLogout = async () => {
         authApi.logout();
         router.push("/auth/login");
     };
 
+    const handleEditClick = (id: string) => {
+        const listing = listings.find(l => l.id === id);
+        if (listing) {
+            setEditingListing(listing);
+            setEditForm({
+                title: listing.title,
+                price: listing.price || 0,
+                currency: listing.currency || "TRY",
+                status: listing.status || "active"
+            });
+        }
+    };
+
+    const handleUpdateListing = async () => {
+        if (!editingListing) return;
+        try {
+            const updated = await authApi.updateListing(editingListing.id, editForm);
+            setListings(listings.map(l => l.id === updated.id ? updated : l));
+            setEditingListing(null);
+        } catch (err) {
+            console.error(err);
+            alert("İlan güncellenemedi.");
+        }
+    };
+
     if (loading) return <div className="p-8 text-center text-gray-500">Yükleniyor...</div>;
 
-    // Fallback UI if user fetch fails but we want to show the page layout or at least logout
     const displayUser: UserResponse = user || {
         display_name: "Kullanıcı",
         email: "user@example.com",
@@ -84,165 +122,263 @@ export default function ProfilePage() {
     };
 
     return (
-        <div className="max-w-5xl mx-auto py-8 px-4">
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden mb-8">
-                {/* Banner/Header */}
-                <div className="h-40 bg-gradient-to-r from-red-600 to-red-400"></div>
-
-                <div className="px-8 pb-8">
-                    <div className="relative flex justify-between items-end -mt-16 mb-6">
-                        <div className="relative">
+        <div className="max-w-7xl mx-auto py-8 px-4 grid grid-cols-1 lg:grid-cols-12 gap-8">
+            {/* Left Sidebar - Profile Card */}
+            <div className="lg:col-span-4 space-y-6">
+                <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-200">
+                    <div className="flex flex-col items-center text-center">
+                        <div className="relative mb-4">
                             {displayUser.photo_url ? (
                                 <img
                                     src={displayUser.photo_url}
                                     alt={displayUser.display_name}
-                                    className="w-32 h-32 rounded-full border-4 border-white object-cover bg-white shadow-md"
+                                    className="w-32 h-32 rounded-full border-4 border-white shadow-lg object-cover"
                                 />
                             ) : (
-                                <div className="w-32 h-32 rounded-full border-4 border-white bg-gray-100 flex items-center justify-center shadow-md">
-                                    <User className="w-12 h-12 text-gray-300" />
+                                <div className="w-32 h-32 rounded-full border-4 border-white bg-gray-100 flex items-center justify-center shadow-lg">
+                                    <User className="w-12 h-12 text-gray-400" />
                                 </div>
                             )}
                         </div>
 
-                        {!isEditing && (
-                            <div className="flex items-center gap-3 mb-2">
-                                <button
-                                    onClick={() => setIsEditing(true)}
-                                    className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-xl text-sm font-bold text-gray-700 hover:bg-gray-50 transition-colors shadow-sm"
-                                >
-                                    <Settings className="w-4 h-4" />
-                                    Profili Düzenle
-                                </button>
-                                <button
-                                    onClick={handleLogout}
-                                    className="flex items-center gap-2 px-4 py-2 bg-red-50 text-red-600 border border-red-100 rounded-xl text-sm font-bold hover:bg-red-100 transition-colors"
-                                >
-                                    <LogOut className="w-4 h-4" />
-                                    Çıkış Yap
-                                </button>
+                        {isEditing ? (
+                            <div className="w-full space-y-4 animate-in fade-in">
+                                <input
+                                    type="text"
+                                    value={formData.display_name}
+                                    onChange={(e) => setFormData({ ...formData, display_name: e.target.value })}
+                                    className="w-full p-2 border border-gray-300 rounded-lg text-sm"
+                                    placeholder="Name"
+                                />
+                                <textarea
+                                    value={formData.bio}
+                                    onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
+                                    className="w-full p-2 border border-gray-300 rounded-lg text-sm"
+                                    rows={3}
+                                    placeholder="Bio"
+                                />
+                                <div className="flex gap-2">
+                                    <button onClick={handleSave} className="flex-1 bg-red-600 text-white py-2 rounded-lg text-sm font-bold">Save</button>
+                                    <button onClick={() => setIsEditing(false)} className="flex-1 bg-gray-100 text-gray-700 py-2 rounded-lg text-sm font-bold">Cancel</button>
+                                </div>
+                            </div>
+                        ) : (
+                            <>
+                                <h1 className="text-2xl font-bold text-gray-900">{displayUser.display_name}</h1>
+                                <p className="text-red-600 font-medium text-sm mb-4">@{displayUser.username || "username"}</p>
+
+                                <p className="text-gray-600 text-sm leading-relaxed mb-6">
+                                    {displayUser.bio || "No bio description."}
+                                </p>
+
+                                <div className="w-full space-y-3 mb-6">
+                                    <div className="flex items-center gap-3 text-gray-500 text-sm">
+                                        <MapPin className="w-4 h-4" />
+                                        {displayUser.location?.city || "Unknown City"}, {displayUser.location?.district || "Country"}
+                                    </div>
+                                    <div className="flex items-center gap-3 text-gray-500 text-sm">
+                                        <Calendar className="w-4 h-4" />
+                                        Joined {displayUser.created_at ? new Date(displayUser.created_at).toLocaleDateString() : "Recently"}
+                                    </div>
+                                </div>
+
+                                <div className="w-full space-y-3">
+                                    <button
+                                        onClick={() => setIsEditing(true)}
+                                        className="w-full py-2.5 bg-red-600 text-white rounded-xl font-bold text-sm hover:bg-red-700 transition-colors flex items-center justify-center gap-2"
+                                    >
+                                        <Settings className="w-4 h-4" />
+                                        Edit Profile
+                                    </button>
+                                    <button className="w-full py-2.5 bg-white border border-gray-200 text-gray-700 rounded-xl font-bold text-sm hover:bg-gray-50 transition-colors flex items-center justify-center gap-2">
+                                        <Share2 className="w-4 h-4" />
+                                        Share Profile
+                                    </button>
+                                </div>
+                            </>
+                        )}
+                    </div>
+                </div>
+
+                <button
+                    onClick={handleLogout}
+                    className="w-full py-2 text-gray-400 hover:text-red-600 text-sm font-medium transition-colors flex items-center justify-center gap-2"
+                >
+                    <LogOut className="w-4 h-4" />
+                    Sign Out
+                </button>
+            </div>
+
+            {/* Right Content - Dashboard */}
+            <div className="lg:col-span-8 space-y-8">
+
+                {/* Impact Dashboard */}
+                <div>
+                    <div className="flex items-center justify-between mb-4">
+                        <h2 className="text-xl font-bold text-gray-900">Impact Dashboard</h2>
+                        <a href="#" className="text-sm font-medium text-red-600 hover:underline">View detailed report</a>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div className="bg-white p-5 rounded-xl border border-gray-200 shadow-sm relative overflow-hidden group">
+                            <div className="flex justify-between items-start mb-2">
+                                <span className="text-gray-500 text-xs font-bold uppercase tracking-wider">Carbon Saved</span>
+                                <div className="p-1.5 bg-green-50 rounded-lg text-green-600">
+                                    <Leaf className="w-4 h-4" />
+                                </div>
+                            </div>
+                            <div className="text-3xl font-extrabold text-gray-900">
+                                {displayUser.stats?.carbon_saved || 0}<span className="text-sm text-gray-400 font-medium ml-1">kg</span>
+                            </div>
+                        </div>
+                        <div className="bg-white p-5 rounded-xl border border-gray-200 shadow-sm relative overflow-hidden group">
+                            <div className="flex justify-between items-start mb-2">
+                                <span className="text-gray-500 text-xs font-bold uppercase tracking-wider">Items Donated</span>
+                                <div className="p-1.5 bg-blue-50 rounded-lg text-blue-600">
+                                    <Gift className="w-4 h-4" />
+                                </div>
+                            </div>
+                            <div className="text-3xl font-extrabold text-gray-900">
+                                {displayUser.stats?.items_donated || 0}
+                            </div>
+                        </div>
+                        <div className="bg-white p-5 rounded-xl border border-gray-200 shadow-sm relative overflow-hidden group">
+                            <div className="flex justify-between items-start mb-2">
+                                <span className="text-gray-500 text-xs font-bold uppercase tracking-wider">Items Received</span>
+                                <div className="p-1.5 bg-purple-50 rounded-lg text-purple-600">
+                                    <Box className="w-4 h-4" />
+                                </div>
+                            </div>
+                            <div className="text-3xl font-extrabold text-gray-900">
+                                {displayUser.stats?.items_received || 0}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Content Tabs */}
+                <div>
+                    <div className="flex items-center gap-8 border-b border-gray-200 mb-6">
+                        <button
+                            onClick={() => setActiveTab('listings')}
+                            className={`pb-3 text-sm font-bold transition-all relative flex items-center gap-2 ${activeTab === 'listings' ? 'text-red-600 border-b-2 border-red-600' : 'text-gray-500 hover:text-gray-700'
+                                }`}
+                        >
+                            <Box className="w-4 h-4" />
+                            My Listings
+                            <span className="bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full text-xs">{listings.length}</span>
+                        </button>
+                        <button
+                            onClick={() => setActiveTab('requests')}
+                            className={`pb-3 text-sm font-bold transition-all relative flex items-center gap-2 ${activeTab === 'requests' ? 'text-red-600 border-b-2 border-red-600' : 'text-gray-500 hover:text-gray-700'
+                                }`}
+                        >
+                            <Heart className="w-4 h-4" />
+                            My Requests
+                        </button>
+                        <button
+                            onClick={() => setActiveTab('reviews')}
+                            className={`pb-3 text-sm font-bold transition-all relative flex items-center gap-2 ${activeTab === 'reviews' ? 'text-red-600 border-b-2 border-red-600' : 'text-gray-500 hover:text-gray-700'
+                                }`}
+                        >
+                            <MessageSquare className="w-4 h-4" />
+                            Reviews
+                        </button>
+                    </div>
+
+                    {/* Tab Panels */}
+                    <div className="min-h-[300px]">
+                        {activeTab === 'listings' && (
+                            <MyListings listings={listings} onEdit={handleEditClick} />
+                        )}
+                        {activeTab === 'requests' && (
+                            <div className="text-center py-12 text-gray-400 bg-gray-50 rounded-xl border border-dashed border-gray-200">
+                                <Heart className="w-12 h-12 mx-auto mb-3 opacity-20" />
+                                <p>No requests yet</p>
+                            </div>
+                        )}
+                        {activeTab === 'reviews' && (
+                            <div className="text-center py-12 text-gray-400 bg-gray-50 rounded-xl border border-dashed border-gray-200">
+                                <Star className="w-12 h-12 mx-auto mb-3 opacity-20" />
+                                <p>No reviews yet</p>
                             </div>
                         )}
                     </div>
-
-                    {isEditing ? (
-                        <div className="max-w-2xl space-y-4 animate-in fade-in slide-in-from-top-2">
-                            {/* ... Editing Form Fields ... */}
-                            <div className="space-y-4">
-                                <div className="space-y-2">
-                                    <label className="text-sm font-medium text-gray-700">Ad Soyad</label>
-                                    <input
-                                        type="text"
-                                        value={formData.display_name}
-                                        onChange={(e) => setFormData({ ...formData, display_name: e.target.value })}
-                                        className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-red-500 placeholder:text-gray-400"
-                                    />
-                                </div>
-                                <div className="space-y-2">
-                                    <label className="text-sm font-medium text-gray-700">Biyografi</label>
-                                    <textarea
-                                        value={formData.bio}
-                                        onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
-                                        className="flex w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-red-500 placeholder:text-gray-400"
-                                        rows={3}
-                                    />
-                                </div>
-                                <div className="space-y-2">
-                                    <label className="text-sm font-medium text-gray-700">Profil Fotoğrafı URL</label>
-                                    <input
-                                        type="url"
-                                        value={formData.photo_url}
-                                        onChange={(e) => setFormData({ ...formData, photo_url: e.target.value })}
-                                        className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-red-500 placeholder:text-gray-400"
-                                    />
-                                </div>
-                            </div>
-
-                            <div className="flex justify-end gap-2 pt-2">
-                                <button
-                                    onClick={() => setIsEditing(false)}
-                                    className="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg text-sm font-medium transition-colors"
-                                >
-                                    İptal
-                                </button>
-                                <button
-                                    onClick={handleSave}
-                                    disabled={saving}
-                                    className="px-4 py-2 bg-red-600 text-white hover:bg-red-700 rounded-lg text-sm font-medium transition-colors"
-                                >
-                                    {saving ? "Kaydediliyor..." : "Kaydet"}
-                                </button>
-                            </div>
-                        </div>
-                    ) : (
-                        <div>
-                            <div className="mb-8">
-                                <h1 className="text-3xl font-extrabold text-gray-900">{displayUser.display_name}</h1>
-                                <p className="text-gray-500">{displayUser.email}</p>
-                            </div>
-
-                            {/* Tabs */}
-                            <div className="flex items-center gap-8 border-b border-gray-200 mb-8">
-                                <button
-                                    onClick={() => setActiveTab('profile')}
-                                    className={`flex items-center gap-2 pb-3 text-sm font-bold transition-all relative ${activeTab === 'profile'
-                                        ? 'text-red-600'
-                                        : 'text-gray-500 hover:text-gray-700'
-                                        }`}
-                                >
-                                    <User className="w-4 h-4" />
-                                    Profil
-                                    {activeTab === 'profile' && <div className="absolute bottom-0 left-0 w-full h-0.5 bg-red-600 rounded-full"></div>}
-                                </button>
-                                <button
-                                    onClick={() => setActiveTab('listings')}
-                                    className={`flex items-center gap-2 pb-3 text-sm font-bold transition-all relative ${activeTab === 'listings'
-                                        ? 'text-red-600'
-                                        : 'text-gray-500 hover:text-gray-700'
-                                        }`}
-                                >
-                                    <LayoutGrid className="w-4 h-4" />
-                                    İlanlarım
-                                    {activeTab === 'listings' && <div className="absolute bottom-0 left-0 w-full h-0.5 bg-red-600 rounded-full"></div>}
-                                </button>
-                            </div>
-
-                            {/* Tab Content */}
-                            {activeTab === 'profile' ? (
-                                <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
-                                    {displayUser.bio && (
-                                        <div className="mb-8">
-                                            <h3 className="text-lg font-bold text-gray-900 mb-2">Hakkında</h3>
-                                            <div className="p-6 bg-gray-50 rounded-2xl border border-gray-100">
-                                                <p className="text-gray-700 leading-relaxed">{displayUser.bio}</p>
-                                            </div>
-                                        </div>
-                                    )}
-
-                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                                        <div className="flex flex-col items-center justify-center p-6 bg-white border border-gray-100 rounded-xl shadow-sm">
-                                            <div className="text-3xl font-extrabold text-purple-600 mb-1">{displayUser.stats?.items_donated || 0}</div>
-                                            <div className="text-[10px] font-bold text-purple-400 uppercase tracking-widest">Bağışlanan</div>
-                                        </div>
-                                        <div className="flex flex-col items-center justify-center p-6 bg-white border border-gray-100 rounded-xl shadow-sm">
-                                            <div className="text-3xl font-extrabold text-pink-600 mb-1">{displayUser.stats?.items_received || 0}</div>
-                                            <div className="text-[10px] font-bold text-pink-400 uppercase tracking-widest">Alınan</div>
-                                        </div>
-                                        <div className="flex flex-col items-center justify-center p-6 bg-white border border-gray-100 rounded-xl shadow-sm">
-                                            <div className="text-3xl font-extrabold text-green-600 mb-1">{displayUser.stats?.carbon_saved || 0}</div>
-                                            <div className="text-[10px] font-bold text-green-400 uppercase tracking-widest">Karbon Tasarrufu</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            ) : (
-                                <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
-                                    <MyListings />
-                                </div>
-                            )}
-                        </div>
-                    )}
                 </div>
             </div>
+
+            {/* Edit Listing Modal */}
+            {editingListing && (
+                <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-in fade-in duration-200">
+                    <div className="bg-white rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden">
+                        <div className="p-4 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
+                            <h3 className="font-bold text-lg text-gray-900">İlanı Düzenle</h3>
+                            <button onClick={() => setEditingListing(null)} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
+                                <X className="w-5 h-5 text-gray-500" />
+                            </button>
+                        </div>
+                        <div className="p-6 space-y-4">
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Başlık</label>
+                                <input
+                                    type="text"
+                                    value={editForm.title}
+                                    onChange={e => setEditForm({ ...editForm, title: e.target.value })}
+                                    className="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all font-medium"
+                                />
+                            </div>
+                            <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">Fiyat</label>
+                                    <input
+                                        type="number"
+                                        value={editForm.price}
+                                        onChange={e => setEditForm({ ...editForm, price: Number(e.target.value) })}
+                                        className="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all font-medium"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">Para Birimi</label>
+                                    <select
+                                        value={editForm.currency}
+                                        onChange={e => setEditForm({ ...editForm, currency: e.target.value })}
+                                        className="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all font-medium"
+                                    >
+                                        <option value="TRY">TRY</option>
+                                        <option value="USD">USD</option>
+                                        <option value="EUR">EUR</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Durum</label>
+                                <select
+                                    value={editForm.status}
+                                    onChange={e => setEditForm({ ...editForm, status: e.target.value })}
+                                    className="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all font-medium"
+                                >
+                                    <option value="active">Active</option>
+                                    <option value="pending">Pending</option>
+                                    <option value="sold">Sold</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div className="p-4 border-t border-gray-100 flex justify-end gap-3 bg-gray-50/50">
+                            <button
+                                onClick={() => setEditingListing(null)}
+                                className="px-5 py-2.5 text-gray-700 font-bold hover:bg-white hover:shadow-sm border border-transparent hover:border-gray-200 rounded-xl transition-all text-sm"
+                            >
+                                İptal
+                            </button>
+                            <button
+                                onClick={handleUpdateListing}
+                                className="px-5 py-2.5 bg-red-600 text-white font-bold rounded-xl hover:bg-red-700 shadow-lg shadow-red-500/30 transition-all text-sm"
+                            >
+                                Değişiklikleri Kaydet
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

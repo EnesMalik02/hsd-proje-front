@@ -115,7 +115,20 @@ export const authApi = {
         return request<ListingResponse>(`/listings/${id}`, {
             method: "GET",
         });
-    }
+    },
+
+    getMyListings: async (): Promise<ListingResponse[]> => {
+        return request<ListingResponse[]>("/listings/me", {
+            method: "GET",
+        });
+    },
+
+    updateListing: async (id: string, data: any): Promise<ListingResponse> => {
+        return request<ListingResponse>(`/listings/${id}`, {
+            method: "PATCH",
+            body: JSON.stringify(data),
+        });
+    },
 };
 
 export const chatApi = {
