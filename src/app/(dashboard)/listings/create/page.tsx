@@ -1,16 +1,21 @@
 "use client";
 
-import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { authApi } from "@/lib/api";
-import { ListingCreate } from "@/lib/types";
+import { ListingCreate, Province, ProvinceApiResponse, District } from "@/lib/types";
 import { compressImage } from "@/lib/imageUtils";
 import { Loader2, X, Plus } from "lucide-react";
+import { useState, useEffect } from "react";
 
 export default function CreateListingPage() {
     const router = useRouter();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+
+    // Location States
+    const [provinces, setProvinces] = useState<Province[]>([]);
+    const [availableDistricts, setAvailableDistricts] = useState<District[]>([]);
+    const [loadingLocation, setLoadingLocation] = useState(true);
 
     const [formData, setFormData] = useState<ListingCreate>({
         title: "",
@@ -21,13 +26,60 @@ export default function CreateListingPage() {
         price: 0,
         currency: "TRY",
         location: {
-            lat: 39.9334, // Default Anchor
+            lat: 39.9334,
             lng: 32.8597,
-            city: "Ankara",
-            district: "Cankaya"
+            city: "",
+            district: ""
         },
         status: "active"
     });
+
+    useEffect(() => {
+        const fetchProvinces = async () => {
+            try {
+                const res = await fetch("https://api.turkiyeapi.dev/v1/provinces");
+                const json: ProvinceApiResponse = await res.json();
+                if (json.status === "OK") {
+                    setProvinces(json.data);
+                }
+            } catch (error) {
+                console.error("Failed to fetch provinces:", error);
+            } finally {
+                setLoadingLocation(false);
+            }
+        };
+
+        fetchProvinces();
+    }, []);
+
+    const handleCityChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const selectedCityName = e.target.value;
+        const selectedProvince = provinces.find(p => p.name === selectedCityName);
+
+        if (selectedProvince) {
+            setAvailableDistricts(selectedProvince.districts);
+            setFormData(prev => ({
+                ...prev,
+                location: {
+                    ...prev.location,
+                    city: selectedCityName,
+                    district: "", // Reset district
+                    lat: selectedProvince.coordinates?.latitude || 39.9334,
+                    lng: selectedProvince.coordinates?.longitude || 32.8597
+                }
+            }));
+        } else {
+            setAvailableDistricts([]);
+            setFormData(prev => ({
+                ...prev,
+                location: {
+                    ...prev.location,
+                    city: "",
+                    district: "",
+                }
+            }));
+        }
+    };
 
     const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const files = e.target.files;
@@ -223,27 +275,42 @@ export default function CreateListingPage() {
                     </div>
                 </div>
 
-                {/* Simplified Location Inputs */}
+                {/* Location Selection */}
                 <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
                         <label className="text-sm font-medium text-gray-900 dark:text-gray-200">Şehir</label>
-                        <input
-                            type="text"
+                        <select
                             required
-                            className="flex h-10 w-full rounded-md border border-gray-300 dark:border-gray-700 bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                            className="flex h-10 w-full rounded-md border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
                             value={formData.location.city}
-                            onChange={(e) => setFormData({ ...formData, location: { ...formData.location, city: e.target.value } })}
-                        />
+                            onChange={handleCityChange}
+                            disabled={loadingLocation}
+                        >
+                            <option value="">Seçiniz</option>
+                            {provinces.map((province) => (
+                                <option key={province.id} value={province.name}>
+                                    {province.name}
+                                </option>
+                            ))}
+                        </select>
+                        {loadingLocation && <span className="text-xs text-gray-400">Yükleniyor...</span>}
                     </div>
                     <div className="space-y-2">
                         <label className="text-sm font-medium text-gray-900 dark:text-gray-200">İlçe</label>
-                        <input
-                            type="text"
+                        <select
                             required
-                            className="flex h-10 w-full rounded-md border border-gray-300 dark:border-gray-700 bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                            className="flex h-10 w-full rounded-md border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
                             value={formData.location.district}
                             onChange={(e) => setFormData({ ...formData, location: { ...formData.location, district: e.target.value } })}
-                        />
+                            disabled={!formData.location.city}
+                        >
+                            <option value="">Seçiniz</option>
+                            {availableDistricts.map((district) => (
+                                <option key={district.id} value={district.name}>
+                                    {district.name}
+                                </option>
+                            ))}
+                        </select>
                     </div>
                 </div>
 
