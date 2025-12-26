@@ -11,6 +11,7 @@ export default function RegisterPage() {
     const [error, setError] = useState<string | null>(null);
     const [formData, setFormData] = useState({
         email: "",
+        username: "",
         password: "",
         display_name: "",
     });
@@ -23,7 +24,7 @@ export default function RegisterPage() {
         try {
             await authApi.register(formData);
             router.push("/"); // Redirect to dashboard/home after register
-        } catch (err: any) {
+        } catch (err: unknown) {
             if (err instanceof ApiError) {
                 // Try to read validation error message if available
                 const detail = err.data?.detail;
@@ -72,6 +73,21 @@ export default function RegisterPage() {
                         required
                         value={formData.display_name}
                         onChange={(e) => setFormData({ ...formData, display_name: e.target.value })}
+                    />
+                </div>
+
+                <div className="space-y-2">
+                    <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70" htmlFor="username">
+                        Kullanıcı Adı
+                    </label>
+                    <input
+                        className="flex h-10 w-full rounded-md border border-gray-300 dark:border-gray-700 bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent disabled:cursor-not-allowed disabled:opacity-50 transition-all"
+                        id="username"
+                        type="text"
+                        placeholder="kullaniciadi"
+                        required
+                        value={formData.username}
+                        onChange={(e) => setFormData({ ...formData, username: e.target.value })}
                     />
                 </div>
 

@@ -10,7 +10,7 @@ export default function LoginPage() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [formData, setFormData] = useState({
-        email: "",
+        identifier: "",
         password: "",
     });
 
@@ -22,7 +22,7 @@ export default function LoginPage() {
         try {
             await authApi.login(formData);
             router.push("/"); // Redirect to dashboard/home after login
-        } catch (err: any) {
+        } catch (err: unknown) {
             if (err instanceof ApiError) {
                 // Try to read validation error message if available
                 const detail = err.data?.detail;
@@ -61,16 +61,16 @@ export default function LoginPage() {
 
                 <div className="space-y-2">
                     <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70" htmlFor="email">
-                        E-posta
+                        E-posta veya Kullanıcı Adı
                     </label>
                     <input
                         className="flex h-10 w-full rounded-md border border-gray-300 dark:border-gray-700 bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent disabled:cursor-not-allowed disabled:opacity-50 transition-all"
                         id="email"
-                        type="email"
-                        placeholder="ornek@email.com"
+                        type="text"
+                        placeholder="E-posta veya kullanıcı adı"
                         required
-                        value={formData.email}
-                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                        value={formData.identifier}
+                        onChange={(e) => setFormData({ ...formData, identifier: e.target.value })}
                     />
                 </div>
 

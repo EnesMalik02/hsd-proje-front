@@ -39,19 +39,22 @@ export interface ListingResponse {
 
 export interface UserUpdate {
     display_name?: string | null;
+    username?: string | null;
     photo_url?: string | null;
     bio?: string | null;
     fcm_token?: string | null;
     verification_doc?: string | null;
+    location?: Location | null;
 }
 
 export interface UserLogin {
-    email: string;
+    identifier: string;
     password: string;
 }
 
 export interface UserRegister {
     email: string;
+    username: string;
     password: string;
     display_name: string;
 }
@@ -64,11 +67,13 @@ export interface Token {
 export interface UserResponse {
     email: string;
     display_name: string;
+    username: string;
     photo_url?: string | null;
     role?: string;
     bio?: string | null;
     fcm_token?: string | null;
     verification_doc?: string | null;
+    location?: Location | null;
     uid: string;
     is_verified?: boolean;
     stats?: UserStats;
