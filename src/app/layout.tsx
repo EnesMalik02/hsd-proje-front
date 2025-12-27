@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "HSD Proje",
+  title: "Loopa",
   description: "İkinci El ve Bağış Platformu",
 };
 

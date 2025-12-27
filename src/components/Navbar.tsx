@@ -15,7 +15,7 @@ export default function Navbar() {
                         <div className="bg-red-600 p-1.5 rounded-lg">
                             <Hexagon className="w-5 h-5 text-white fill-current" />
                         </div>
-                        <span className="text-xl font-bold tracking-tight text-gray-900">HSD Proje</span>
+                        <span className="text-xl font-bold tracking-tight text-gray-900">Loopa</span>
                     </Link>
                 </div>
 

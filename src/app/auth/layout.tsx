@@ -16,7 +16,7 @@ export default function AuthLayout({
 
             {/* Footer */}
             <footer className="py-8 text-center text-xs text-gray-400">
-                © 2024 HSD Proje API. All rights reserved.
+                © 2024 Loopa. All rights reserved.
             </footer>
         </div>
     );

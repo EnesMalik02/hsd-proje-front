@@ -346,7 +346,7 @@ export default function ListingDetailPage() {
                                     <CheckCircle2 className="w-3 h-3 text-white" />
                                 </div>
                                 <div>
-                                    <div className="text-sm font-bold text-gray-900">HSD Onaylı İlan</div>
+                                    <div className="text-sm font-bold text-gray-900">Loopa Onaylı İlan</div>
                                     <p className="text-xs text-gray-500 mt-1 leading-relaxed">
                                         Bu ürünün orijinalliği ve durumu doğrulanmıştır.
                                     </p>
@@ -362,9 +362,9 @@ export default function ListingDetailPage() {
                     <div className="bg-red-600 p-1 rounded-lg">
                         <Hexagon className="w-4 h-4 text-white fill-current" />
                     </div>
-                    <span className="text-base font-bold text-gray-900">HSD Proje</span>
+                    <span className="text-base font-bold text-gray-900">Loopa</span>
                 </div>
-                © 2024 HSD Proje. Tüm hakları saklıdır.
+                © 2024 Loopa. Tüm hakları saklıdır.
             </footer>
 
         </div>

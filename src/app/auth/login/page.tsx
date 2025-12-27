@@ -58,7 +58,7 @@ export default function LoginPage() {
             <div className="w-full bg-white rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] p-8 border border-gray-100">
                 <div className="text-center mb-8">
                     <h1 className="text-2xl font-bold text-gray-900">Tekrar Hoş Geldiniz</h1>
-                    <p className="text-sm text-gray-500 mt-2">HSD Proje özelliklerine erişmek için giriş yapın</p>
+                    <p className="text-sm text-gray-500 mt-2">Loopa özelliklerine erişmek için giriş yapın</p>
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-4">

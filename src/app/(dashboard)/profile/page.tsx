@@ -276,14 +276,6 @@ export default function ProfilePage() {
                             <span className="bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full text-xs">{listings.length}</span>
                         </button>
                         <button
-                            onClick={() => setActiveTab('requests')}
-                            className={`pb-3 text-sm font-bold transition-all relative flex items-center gap-2 ${activeTab === 'requests' ? 'text-red-600 border-b-2 border-red-600' : 'text-gray-500 hover:text-gray-700'
-                                }`}
-                        >
-                            <MessageSquare className="w-4 h-4" />
-                            Taleplerim
-                        </button>
-                        <button
                             onClick={() => setActiveTab('favorites')}
                             className={`pb-3 text-sm font-bold transition-all relative flex items-center gap-2 ${activeTab === 'favorites' ? 'text-red-600 border-b-2 border-red-600' : 'text-gray-500 hover:text-gray-700'
                                 }`}

@@ -31,7 +31,7 @@ export default function Sidebar() {
                         <Package className="h-5 w-5 text-white" />
                     </div>
                     <span className="self-center whitespace-nowrap text-xl font-semibold dark:text-white">
-                        HSD Proje
+                        Loopa
                     </span>
                 </div>
 
