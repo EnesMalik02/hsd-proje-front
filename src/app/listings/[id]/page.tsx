@@ -185,7 +185,7 @@ export default function ListingDetailPage() {
                             <div className="flex items-center gap-3 mb-4">
                                 <span className="bg-red-100 text-red-600 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider flex items-center gap-1">
                                     {listing.type === 'donation' ? <Gift className="w-3 h-3" /> : null}
-                                    {listing.type === 'donation' ? 'Bağış' : 'Satılık'}
+                                    {listing.type === 'donation' ? 'Ücretsiz' : 'Satılık'}
                                 </span>
                                 <div className="flex items-center gap-1 text-gray-500 text-xs font-medium">
                                     <CalendarDays className="w-3 h-3" />
@@ -271,7 +271,7 @@ export default function ListingDetailPage() {
                                                 }
                                             `}</style>
                                             <div className="donation-label text-5xl font-extrabold text-red-600 border-4 border-red-600 px-4 py-1 rounded-xl shadow-lg bg-white/50 backdrop-blur-sm -rotate-[30deg]">
-                                                BAĞIŞ
+                                                ÜCRETSİZ
                                             </div>
                                         </div>
                                     ) : (
@@ -302,7 +302,7 @@ export default function ListingDetailPage() {
                                 <div className="space-y-3">
                                     <button className="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-xl transition-colors flex items-center justify-center gap-2">
                                         <Phone className="w-4 h-4" />
-                                        {listing.type === 'donation' ? 'Bağışçıyla' : 'Satıcıyla'} İletişime Geç
+                                        {listing.type === 'donation' ? 'İlan Sahibiyle' : 'Satıcıyla'} İletişime Geç
                                     </button>
 
                                     <button

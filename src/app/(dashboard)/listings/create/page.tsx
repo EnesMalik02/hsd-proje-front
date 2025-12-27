@@ -155,7 +155,7 @@ export default function CreateListingPage() {
                 <div>
                     <h1 className="text-2xl font-extrabold text-gray-900 tracking-tight">Yeni İlan Oluştur</h1>
                     <p className="text-sm text-gray-500">
-                        Satmak veya bağışlamak istediğiniz ürünün detaylarını giriniz.
+                        Satmak veya ücretsiz vermek istediğiniz ürünün detaylarını giriniz.
                     </p>
                 </div>
             </div>
@@ -270,7 +270,7 @@ export default function CreateListingPage() {
                                             }}
                                         >
                                             <option value="sale">Satılık</option>
-                                            <option value="donation">Bağış</option>
+                                            <option value="donation">Ücretsiz</option>
                                         </select>
                                     </div>
                                 </div>

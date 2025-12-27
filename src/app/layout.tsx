@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Loopa",
-  description: "İkinci El ve Bağış Platformu",
+  description: "İkinci El ve Ücretsiz Paylaşım Platformu",
 };
 
 export default function RootLayout({
