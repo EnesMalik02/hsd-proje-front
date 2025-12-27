@@ -25,6 +25,7 @@ export default function ListingDetailPage() {
     const [messageText, setMessageText] = useState("");
     const [sendingRequest, setSendingRequest] = useState(false);
     const [requestSent, setRequestSent] = useState(false);
+    const [isFavorite, setIsFavorite] = useState(false);
 
     useEffect(() => {
         const fetchListing = async () => {
@@ -47,15 +48,37 @@ export default function ListingDetailPage() {
             }
         }
 
+        const checkFavorite = async () => {
+            try {
+                const favorites = await authApi.getFavorites();
+                if (favorites.some(f => f.id === params.id)) {
+                    setIsFavorite(true);
+                }
+            } catch (err) {
+                console.error("Failed to check favorite status", err);
+            }
+        }
+
         if (params.id) {
             fetchListing();
             fetchChats();
+            checkFavorite();
         }
     }, [params.id]);
 
     useEffect(() => {
         setIsDonation(listing?.price === 0 || listing?.type === 'donation');
     }, [listing]);
+
+    const handleToggleFavorite = async () => {
+        if (!listing) return;
+        try {
+            const res = await authApi.toggleFavorite(listing.id);
+            setIsFavorite(res.is_favorite);
+        } catch (err) {
+            console.error("Failed to toggle favorite", err);
+        }
+    };
 
     const handleMessage = async () => {
         if (!listing) return;
@@ -299,9 +322,12 @@ export default function ListingDetailPage() {
                                 </div>
 
                                 <div className="grid grid-cols-2 gap-2 mt-6 pt-6 border-t border-gray-100">
-                                    <button className="flex flex-col items-center justify-center gap-1 text-gray-400 hover:text-red-600 transition-colors">
-                                        <div className="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center shadow-sm">
-                                            <Heart className="w-4 h-4" />
+                                    <button
+                                        onClick={handleToggleFavorite}
+                                        className={`flex flex-col items-center justify-center gap-1 transition-colors ${isFavorite ? 'text-red-600' : 'text-gray-400 hover:text-red-600'}`}
+                                    >
+                                        <div className={`w-8 h-8 rounded-full flex items-center justify-center shadow-sm ${isFavorite ? 'bg-red-50' : 'bg-gray-50'}`}>
+                                            <Heart className={`w-4 h-4 ${isFavorite ? 'fill-current' : ''}`} />
                                         </div>
                                         <span className="text-[10px] font-medium uppercase">Kaydet</span>
                                     </button>

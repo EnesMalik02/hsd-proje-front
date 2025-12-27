@@ -143,6 +143,18 @@ export const authApi = {
             body: JSON.stringify(data),
         });
     },
+
+    toggleFavorite: async (id: string): Promise<{ is_favorite: boolean }> => {
+        return request<{ is_favorite: boolean }>(`/listings/${id}/favorite`, {
+            method: "POST",
+        });
+    },
+
+    getFavorites: async (): Promise<ListingResponse[]> => {
+        return request<ListingResponse[]>("/listings/favorites", {
+            method: "GET",
+        });
+    },
 };
 
 export const chatApi = {

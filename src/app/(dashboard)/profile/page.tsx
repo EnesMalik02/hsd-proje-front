@@ -9,29 +9,30 @@ import {
     Heart, MessageSquare, Star, Gift, Box, Leaf, X, Check
 } from "lucide-react";
 import MyListings from "@/components/MyListings";
+import { ListingCard } from "@/components/ListingCard";
 
 export default function ProfilePage() {
     const router = useRouter();
     const [user, setUser] = useState<UserResponse | null>(null);
     const [listings, setListings] = useState<ListingResponse[]>([]);
+    const [favorites, setFavorites] = useState<ListingResponse[]>([]);
     const [loading, setLoading] = useState(true);
     const [isEditing, setIsEditing] = useState(false);
     const [saving, setSaving] = useState(false);
     const [copied, setCopied] = useState(false);
-    const [activeTab, setActiveTab] = useState<'listings' | 'requests'>('listings');
+    const [activeTab, setActiveTab] = useState<'listings' | 'requests' | 'favorites'>('listings');
     const [formData, setFormData] = useState({
         display_name: "",
         bio: "",
         photo_url: ""
     });
 
-    // ... existing hook ...
+    // Edit Listing State
+    const [editingListing, setEditingListing] = useState<ListingResponse | null>(null);
+    const [editForm, setEditForm] = useState({ title: "", price: 0, currency: "TRY", status: "active" });
 
     const handleShare = async () => {
-        // Ideally point to a public profile URL like /u/[username]
-        // For now, we will just use the current URL setup or a mock public URL
         const shareUrl = window.location.href;
-
         const shareData = {
             title: `${user?.display_name || 'User'}'s Profile`,
             text: `Check out ${user?.display_name || 'User'}'s profile!`,
@@ -55,11 +56,6 @@ export default function ProfilePage() {
         }
     };
 
-
-    // Edit Listing State
-    const [editingListing, setEditingListing] = useState<ListingResponse | null>(null);
-    const [editForm, setEditForm] = useState({ title: "", price: 0, currency: "TRY", status: "active" });
-
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -74,6 +70,15 @@ export default function ProfilePage() {
                 // Fetch user listings
                 const userListings = await authApi.getMyListings();
                 setListings(userListings);
+
+                // Fetch favorites
+                try {
+                    const userFavorites = await authApi.getFavorites();
+                    setFavorites(userFavorites);
+                } catch (e) {
+                    console.error("Failed to fetch favorites", e);
+                }
+
             } catch (err) {
                 console.error(err);
                 // Setup mock user for demo if failed
@@ -275,8 +280,17 @@ export default function ProfilePage() {
                             className={`pb-3 text-sm font-bold transition-all relative flex items-center gap-2 ${activeTab === 'requests' ? 'text-red-600 border-b-2 border-red-600' : 'text-gray-500 hover:text-gray-700'
                                 }`}
                         >
-                            <Heart className="w-4 h-4" />
+                            <MessageSquare className="w-4 h-4" />
                             Taleplerim
+                        </button>
+                        <button
+                            onClick={() => setActiveTab('favorites')}
+                            className={`pb-3 text-sm font-bold transition-all relative flex items-center gap-2 ${activeTab === 'favorites' ? 'text-red-600 border-b-2 border-red-600' : 'text-gray-500 hover:text-gray-700'
+                                }`}
+                        >
+                            <Heart className="w-4 h-4" />
+                            Beğendiklerim
+                            <span className="bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full text-xs">{favorites.length}</span>
                         </button>
                     </div>
 
@@ -284,6 +298,36 @@ export default function ProfilePage() {
                     <div className="min-h-[300px]">
                         {activeTab === 'listings' && (
                             <MyListings listings={listings} onEdit={handleEditClick} />
+                        )}
+                        {activeTab === 'favorites' && (
+                            favorites.length > 0 ? (
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                    {favorites.map(listing => (
+                                        <div key={listing.id} className="h-full relative group">
+                                            <ListingCard listing={listing} onClick={() => router.push(`/listings/${listing.id}`)} />
+                                            <button
+                                                onClick={async (e) => {
+                                                    e.stopPropagation();
+                                                    try {
+                                                        await authApi.toggleFavorite(listing.id);
+                                                        setFavorites(prev => prev.filter(f => f.id !== listing.id));
+                                                    } catch (err) {
+                                                        console.error(err);
+                                                    }
+                                                }}
+                                                className="absolute top-2 right-2 p-2 bg-white/90 backdrop-blur rounded-full text-red-600 hover:bg-red-50 transition-colors shadow-sm opacity-0 group-hover:opacity-100"
+                                            >
+                                                <X className="w-4 h-4" />
+                                            </button>
+                                        </div>
+                                    ))}
+                                </div>
+                            ) : (
+                                <div className="text-center py-12 text-gray-400 bg-gray-50 rounded-xl border border-dashed border-gray-200">
+                                    <Heart className="w-12 h-12 mx-auto mb-3 opacity-20" />
+                                    <p>Henüz favori ilanınız yok.</p>
+                                </div>
+                            )
                         )}
                         {activeTab === 'requests' && (
                             <div className="text-center py-12 text-gray-400 bg-gray-50 rounded-xl border border-dashed border-gray-200">
