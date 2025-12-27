@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { Hexagon, Search, Home, List, MessageSquare, User, Menu, X } from "lucide-react";
+import { Hexagon, Search, Home, List, MessageSquare, User, Menu, X, Plus } from "lucide-react";
 
 export default function Navbar() {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -32,6 +32,10 @@ export default function Navbar() {
                     <Link href="/profile" className="flex items-center gap-2 hover:text-red-600 transition-colors">
                         <User className="w-4 h-4" />
                         Profilim
+                    </Link>
+                    <Link href="/listings/create" className="flex items-center gap-2 bg-red-600 text-white px-4 py-2 rounded-xl hover:bg-red-700 transition-colors shadow-md shadow-red-500/20">
+                        <Plus className="w-4 h-4" />
+                        İlan Oluştur
                     </Link>
                 </nav>
 
@@ -71,6 +75,14 @@ export default function Navbar() {
                         >
                             <User className="w-5 h-5" />
                             Profilim
+                        </Link>
+                        <Link
+                            href="/listings/create"
+                            onClick={() => setIsMobileMenuOpen(false)}
+                            className="flex items-center gap-3 text-sm font-bold text-red-600 hover:text-red-700 p-2 hover:bg-red-50 rounded-lg transition-colors"
+                        >
+                            <Plus className="w-5 h-5" />
+                            İlan Oluştur
                         </Link>
                     </nav>
                 </div>
