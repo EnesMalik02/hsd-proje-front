@@ -7,7 +7,9 @@ import { ListingResponse } from "@/lib/types";
 import { ListingCard } from "@/components/ListingCard";
 import { Loader2, Search, Filter, ArrowUpDown, ChevronDown } from "lucide-react";
 
-export default function Home() {
+import { Suspense } from "react";
+
+function HomeContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const query = searchParams.get("q");
@@ -133,5 +135,17 @@ export default function Home() {
                 </div>
             )}
         </div>
+    );
+}
+
+export default function Home() {
+    return (
+        <Suspense fallback={
+            <div className="flex h-screen items-center justify-center">
+                <Loader2 className="h-8 w-8 animate-spin text-red-600" />
+            </div>
+        }>
+            <HomeContent />
+        </Suspense>
     );
 }
